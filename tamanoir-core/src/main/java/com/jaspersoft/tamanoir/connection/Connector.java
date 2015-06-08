@@ -18,28 +18,17 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.rest;
+package com.jaspersoft.tamanoir.connection;
 
-import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-@Path("/connections")
-public class ConnectionsRestService {
-    @POST
-    @Consumes("application/json")
-    public Response createConnection(ConnectionDescriptor connectionDescriptor){
-        new ConnectionsManager().openConnection(connectionDescriptor);
-        return Response.ok(connectionDescriptor).build();
-    }
-
+public interface Connector<C> {
+    C openConnection(ConnectionDescriptor descriptor);
+    void closeConnection(C connection);
+    void testConnection(ConnectionDescriptor connectionDescriptor);
 }

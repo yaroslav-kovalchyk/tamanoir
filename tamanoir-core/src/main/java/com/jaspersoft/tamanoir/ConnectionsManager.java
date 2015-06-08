@@ -18,28 +18,37 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.rest;
+package com.jaspersoft.tamanoir;
 
-import com.jaspersoft.tamanoir.ConnectionsManager;
+import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import java.sql.Connection;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-@Path("/connections")
-public class ConnectionsRestService {
-    @POST
-    @Consumes("application/json")
-    public Response createConnection(ConnectionDescriptor connectionDescriptor){
-        new ConnectionsManager().openConnection(connectionDescriptor);
-        return Response.ok(connectionDescriptor).build();
+public class ConnectionsManager {
+    public <T> Object openConnection(ConnectionDescriptor connectionDescriptor){
+        return getConnector(connectionDescriptor).openConnection(connectionDescriptor);
     }
 
+    public Object buildConnectionMetadata(ConnectionDescriptor connectionDescriptor){
+        return null;
+    }
+
+    protected Class<?> getConnectionClass(ConnectionDescriptor connectionDescriptor){
+        return Connection.class;
+    }
+
+    protected Connector<?> getConnector(ConnectionDescriptor connectionDescriptor){
+        try {
+            // let's hardcode connector class for now. Factory should be here in future
+            return (Connector<?>) Class.forName("com.jaspersoft.tamanoir.psql.PsqlConnector").newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

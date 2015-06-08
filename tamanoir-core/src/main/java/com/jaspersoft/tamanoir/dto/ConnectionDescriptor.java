@@ -18,9 +18,11 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.rest.dto;
+package com.jaspersoft.tamanoir.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p></p>
@@ -30,10 +32,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "connection")
 public class ConnectionDescriptor {
     private String url;
+    private Map<String, String> properties;
 
     public ConnectionDescriptor(){}
     public ConnectionDescriptor(ConnectionDescriptor source){
         url = source.getUrl();
+        if(source.getProperties() != null){
+            properties = new HashMap<String, String>(source.getProperties());
+        }
+    }
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 
     public String getUrl() {
@@ -51,6 +64,7 @@ public class ConnectionDescriptor {
 
         ConnectionDescriptor that = (ConnectionDescriptor) o;
 
+        if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
 
         return true;
@@ -58,13 +72,16 @@ public class ConnectionDescriptor {
 
     @Override
     public int hashCode() {
-        return url != null ? url.hashCode() : 0;
+        int result = url != null ? url.hashCode() : 0;
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "ConnectionDescriptor{" +
                 "url='" + url + '\'' +
+                ", properties=" + properties +
                 '}';
     }
 }

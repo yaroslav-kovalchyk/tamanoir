@@ -26,11 +26,18 @@
             <artifactId>jersey-json</artifactId>
             <version>1.9</version>
         </dependency>
+        <dependency>
+            <groupId>com.jaspersoft.tamanoir</groupId>
+            <artifactId>tamanoir-core</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jaspersoft.tamanoir</groupId>
+            <artifactId>tamanoir-psql</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>tamanoir-web</finalName>
-        <filters>
-            <filter>src/main/resources/local.properties</filter>
-        </filters>
     </build>
 </project>
