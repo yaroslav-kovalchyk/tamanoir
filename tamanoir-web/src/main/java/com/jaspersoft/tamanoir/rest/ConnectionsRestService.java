@@ -23,9 +23,12 @@ package com.jaspersoft.tamanoir.rest;
 import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 /**
@@ -37,9 +40,17 @@ import javax.ws.rs.core.Response;
 public class ConnectionsRestService {
     @POST
     @Consumes("application/json")
-    public Response createConnection(ConnectionDescriptor connectionDescriptor){
-        new ConnectionsManager().openConnection(connectionDescriptor);
-        return Response.ok(connectionDescriptor).build();
+    public Response createConnection(ConnectionDescriptor connectionDescriptor, @HeaderParam("Accept") String accept, @Context final HttpServletRequest request){
+        ConnectionsManager connectionsManager = new ConnectionsManager();
+        final Response response;
+        if(accept != null && accept.toLowerCase().contains("metadata")){
+            response = Response.ok(connectionsManager.buildConnectionMetadata(connectionDescriptor, request.getParameterMap())).build();
+
+        } else {
+            connectionsManager.testConnection(connectionDescriptor);
+            response = Response.ok(connectionDescriptor).build();
+        }
+        return response;
     }
 
 }

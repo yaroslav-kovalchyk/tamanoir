@@ -45,16 +45,18 @@ public class ConnectionDescriptor {
         return properties;
     }
 
-    public void setProperties(Map<String, String> properties) {
+    public ConnectionDescriptor setProperties(Map<String, String> properties) {
         this.properties = properties;
+        return this;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public ConnectionDescriptor setUrl(String url) {
         this.url = url;
+        return this;
     }
 
     @Override

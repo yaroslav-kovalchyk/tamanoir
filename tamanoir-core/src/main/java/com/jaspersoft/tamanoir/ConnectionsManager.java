@@ -21,9 +21,11 @@
 package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.Connector;
+import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
 import java.sql.Connection;
+import java.util.Map;
 
 /**
  * <p></p>
@@ -31,22 +33,22 @@ import java.sql.Connection;
  * @author Yaroslav.Kovalchyk
  */
 public class ConnectionsManager {
-    public <T> Object openConnection(ConnectionDescriptor connectionDescriptor){
-        return getConnector(connectionDescriptor).openConnection(connectionDescriptor);
+    public void testConnection(ConnectionDescriptor connectionDescriptor){
+        getProcessor(connectionDescriptor, Connector.class).testConnection(connectionDescriptor);
     }
 
-    public Object buildConnectionMetadata(ConnectionDescriptor connectionDescriptor){
-        return null;
+    public Object buildConnectionMetadata(ConnectionDescriptor connectionDescriptor, Map<String, String[]> options){
+        return getProcessor(connectionDescriptor, MetadataBuilder.class).build(getProcessor(connectionDescriptor, Connector.class).openConnection(connectionDescriptor), options);
     }
 
     protected Class<?> getConnectionClass(ConnectionDescriptor connectionDescriptor){
         return Connection.class;
     }
 
-    protected Connector<?> getConnector(ConnectionDescriptor connectionDescriptor){
+    protected <T> T getProcessor(ConnectionDescriptor connectionDescriptor, Class<T> processorClass){
         try {
             // let's hardcode connector class for now. Factory should be here in future
-            return (Connector<?>) Class.forName("com.jaspersoft.tamanoir.psql.PsqlConnector").newInstance();
+            return (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlConnector").newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
