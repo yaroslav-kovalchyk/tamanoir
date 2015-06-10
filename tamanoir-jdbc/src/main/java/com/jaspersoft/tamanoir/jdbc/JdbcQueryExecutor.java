@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.psql;
+package com.jaspersoft.tamanoir.jdbc;
 
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 
@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class PsqlQueryExecutor implements QueryExecutor<Connection> {
+public class JdbcQueryExecutor implements QueryExecutor<Connection> {
     @Override
     public Object executeQuery(Connection connection, String query) {
         Statement stmt = null;

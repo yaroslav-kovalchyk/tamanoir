@@ -11,6 +11,6 @@
     <modules>
         <module>tamanoir-core</module>
         <module>tamanoir-web</module>
-        <module>tamanoir-psql</module>
+        <module>tamanoir-jdbc</module>
     </modules>
 </project>

@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.psql;
+package com.jaspersoft.tamanoir.jdbc;
 
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
@@ -26,6 +26,7 @@ import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -33,18 +34,22 @@ import java.util.Properties;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class PsqlConnector implements Connector<Connection>{
+public class JdbcConnector implements Connector<Connection>{
+    public static final String DRIVER_CLASS_PROPERTY = "driverClass";
 
 
     @Override
     public Connection openConnection(ConnectionDescriptor descriptor) {
-        Properties properties = new Properties();
-        Connection connection;
-        if(descriptor.getProperties() != null){
-            properties.putAll(descriptor.getProperties());
+        final Properties properties = new Properties();
+        final Connection connection;
+        final Map<String, String> descriptorProperties = descriptor.getProperties();
+        String driverClassName = descriptorProperties != null && descriptorProperties.get(DRIVER_CLASS_PROPERTY) != null
+                ? descriptorProperties.get(DRIVER_CLASS_PROPERTY) :  "org.postgresql.Driver";
+        if(descriptorProperties != null){
+            properties.putAll(descriptorProperties);
         }
         try {
-            Class.forName("org.postgresql.Driver");
+            Class.forName(driverClassName);
             connection = DriverManager.getConnection(descriptor.getUrl(), properties);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.psql;
+package com.jaspersoft.tamanoir.jdbc;
 
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.dto.MetadataElementItem;
@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class PsqlMetadataBuilder implements MetadataBuilder<Connection> {
+public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
     private static final Map<Integer, String> JDBC_TYPES_BY_CODE;
     static {
         Map<Integer, String> map = new HashMap<Integer, String>();

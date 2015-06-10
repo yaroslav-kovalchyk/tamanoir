@@ -62,11 +62,11 @@ public class ConnectionsManager {
         try {
             // let's hardcode classes for now. Factory should be here in future
             if(processorClass == Connector.class) {
-                result = (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlConnector").newInstance();
+                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcConnector").newInstance();
             } else if(processorClass == MetadataBuilder.class){
-                result = (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlMetadataBuilder").newInstance();
+                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcMetadataBuilder").newInstance();
             } else if(processorClass == QueryExecutor.class){
-                result = (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlQueryExecutor").newInstance();
+                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcQueryExecutor").newInstance();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
