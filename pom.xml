@@ -12,5 +12,6 @@
         <module>tamanoir-core</module>
         <module>tamanoir-web</module>
         <module>tamanoir-jdbc</module>
+        <module>tamanoir-csv</module>
     </modules>
 </project>
