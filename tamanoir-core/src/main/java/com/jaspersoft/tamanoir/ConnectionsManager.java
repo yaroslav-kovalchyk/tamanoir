@@ -58,12 +58,20 @@ public class ConnectionsManager {
     }
 
     protected <T> T getProcessor(ConnectionDescriptor connectionDescriptor, Class<T> processorClass){
+        T result = null;
         try {
-            // let's hardcode connector class for now. Factory should be here in future
-            return (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlConnector").newInstance();
+            // let's hardcode classes for now. Factory should be here in future
+            if(processorClass == Connector.class) {
+                result = (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlConnector").newInstance();
+            } else if(processorClass == MetadataBuilder.class){
+                result = (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlMetadataBuilder").newInstance();
+            } else if(processorClass == QueryExecutor.class){
+                result = (T) Class.forName("com.jaspersoft.tamanoir.psql.PsqlQueryExecutor").newInstance();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return result;
     }
 
 
