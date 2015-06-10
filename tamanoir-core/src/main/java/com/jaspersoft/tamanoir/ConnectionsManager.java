@@ -22,9 +22,10 @@ package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
+import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
+import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 
-import java.sql.Connection;
 import java.util.Map;
 
 /**
@@ -37,12 +38,23 @@ public class ConnectionsManager {
         getProcessor(connectionDescriptor, Connector.class).testConnection(connectionDescriptor);
     }
 
-    public Object buildConnectionMetadata(ConnectionDescriptor connectionDescriptor, Map<String, String[]> options){
-        return getProcessor(connectionDescriptor, MetadataBuilder.class).build(getProcessor(connectionDescriptor, Connector.class).openConnection(connectionDescriptor), options);
+    public Object buildConnectionMetadata(final ConnectionDescriptor connectionDescriptor, final Map<String, String[]> options){
+        return operateConnection(connectionDescriptor, new ConnectionOperator<Object>() {
+            @Override
+            public Object operate(Object connection) {
+                return getProcessor(connectionDescriptor, MetadataBuilder.class).build(connection, options);
+            }
+        });
     }
 
-    protected Class<?> getConnectionClass(ConnectionDescriptor connectionDescriptor){
-        return Connection.class;
+    public Object executeQuery(final QueryConnectionDescriptor queryConnectionDescriptor){
+
+        return operateConnection(queryConnectionDescriptor, new ConnectionOperator<Object>() {
+            @Override
+            public Object operate(Object connection) {
+                return getProcessor(queryConnectionDescriptor, QueryExecutor.class).executeQuery(connection, queryConnectionDescriptor.getNativeQuery());
+            }
+        });
     }
 
     protected <T> T getProcessor(ConnectionDescriptor connectionDescriptor, Class<T> processorClass){
@@ -53,4 +65,24 @@ public class ConnectionsManager {
             throw new RuntimeException(e);
         }
     }
+
+
+
+    protected <R> R operateConnection(ConnectionDescriptor connectionDescriptor, ConnectionOperator<R> operator){
+        final Connector connector = getProcessor(connectionDescriptor, Connector.class);
+        R result;
+        Object connection = null;
+        try {
+            connection = connector.openConnection(connectionDescriptor);
+            result = (R) ((ConnectionOperator)operator).operate(connection);
+        }finally {
+            connector.closeConnection(connection);
+        }
+        return result;
+    }
+
+    private interface ConnectionOperator<R>{
+        R operate(Object connection);
+    }
+
 }

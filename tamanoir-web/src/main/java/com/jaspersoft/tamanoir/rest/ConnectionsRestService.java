@@ -22,6 +22,7 @@ package com.jaspersoft.tamanoir.rest;
 
 import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
+import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -51,6 +52,12 @@ public class ConnectionsRestService {
             response = Response.ok(connectionDescriptor).build();
         }
         return response;
+    }
+
+    @POST
+    @Consumes("application/queryconnection+json")
+    public Response executeQuery(QueryConnectionDescriptor queryConnectionDescriptor){
+        return Response.ok(new ConnectionsManager().executeQuery(queryConnectionDescriptor)).build();
     }
 
 }

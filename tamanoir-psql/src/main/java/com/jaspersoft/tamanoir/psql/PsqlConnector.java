@@ -22,6 +22,7 @@ package com.jaspersoft.tamanoir.psql;
 
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
+import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 import com.jaspersoft.tamanoir.dto.MetadataElementItem;
 import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
@@ -32,7 +33,9 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +52,7 @@ import java.util.Set;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class PsqlConnector implements Connector<Connection>, MetadataBuilder<Connection>{
+public class PsqlConnector implements Connector<Connection>, MetadataBuilder<Connection>, QueryExecutor<Connection>{
     private static final Map<Integer, String> JDBC_TYPES_BY_CODE;
     static {
         Map<Integer, String> map = new HashMap<Integer, String>();
@@ -169,6 +172,39 @@ public class PsqlConnector implements Connector<Connection>, MetadataBuilder<Con
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Object executeQuery(Connection connection, String query) {
+        Statement stmt = null;
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        try {
+            stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            final ResultSetMetaData metaData = rs.getMetaData();
+            ArrayList<String> columnNames = new ArrayList<String>();
+            for(int i = 1; i < metaData.getColumnCount(); i++){
+                columnNames.add(metaData.getColumnName(i));
+            }
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<String, Object>();
+                for(String columnName : columnNames){
+                    row.put(columnName, rs.getString(columnName));
+                }
+                result.add(row);
+            }
+        } catch (Exception e ) {
+            throw new RuntimeException(e);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         return result;
     }
