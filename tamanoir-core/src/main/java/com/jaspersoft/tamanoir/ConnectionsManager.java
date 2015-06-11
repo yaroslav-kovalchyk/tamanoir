@@ -62,11 +62,14 @@ public class ConnectionsManager {
         try {
             // let's hardcode classes for now. Factory should be here in future
             if(processorClass == Connector.class) {
-                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcConnector").newInstance();
+                result = (T) Class.forName("com.jaspersoft.tamanoir.csv.CsvConnector").newInstance();
+//                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcConnector").newInstance();
             } else if(processorClass == MetadataBuilder.class){
-                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcMetadataBuilder").newInstance();
+                result = (T) Class.forName("com.jaspersoft.tamanoir.csv.CsvMetadataBuilder").newInstance();
+//                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcMetadataBuilder").newInstance();
             } else if(processorClass == QueryExecutor.class){
-                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcQueryExecutor").newInstance();
+                result = (T) Class.forName("com.jaspersoft.tamanoir.csv.CsvQueryExecutor").newInstance();
+//                result = (T) Class.forName("com.jaspersoft.tamanoir.jdbc.JdbcQueryExecutor").newInstance();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
