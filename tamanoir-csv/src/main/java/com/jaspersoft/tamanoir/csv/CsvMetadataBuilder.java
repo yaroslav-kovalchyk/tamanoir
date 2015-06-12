@@ -24,7 +24,6 @@ import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.dto.MetadataElementItem;
 import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.MetadataItem;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 
 import java.util.Map;
@@ -38,11 +37,6 @@ import java.util.Set;
 public class CsvMetadataBuilder implements MetadataBuilder<JRCsvDataSource> {
     @Override
     public MetadataItem build(JRCsvDataSource connection, Map<String, String[]> options) {
-        try {
-            connection.next();
-        } catch (JRException e) {
-            throw  new RuntimeException(e);
-        }
         final Set<String> columnNames = connection.getColumnNames().keySet();
         MetadataGroupItem group = new MetadataGroupItem().setName("root");
         for (String columnName : columnNames) {

@@ -38,64 +38,70 @@ import java.util.regex.Pattern;
  * @author Yaroslav.Kovalchyk
  */
 public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource> {
-    private final Pattern QUERY_LIMITED_PATTERN = Pattern.compile("SELECT[\\s]*(.+)[\\s]*LIMIT[\\s]*(\\d+)([\\s]*,[\\s]*(\\d+))*");
-    private final Pattern QUERY_UNLIMITED_PATTERN = Pattern.compile("SELECT[\\s]*(.+)"
+    private final Pattern QUERY_LIMITED_PATTERN = Pattern.compile("select[\\s]*(.+)[\\s]*limit[\\s]*(\\d+)([\\s]*,[\\s]*(\\d+))*");
+    private final Pattern QUERY_UNLIMITED_PATTERN = Pattern.compile("select[\\s]*(.+)"
     );
+
     @Override
     public Object executeQuery(JRCsvDataSource connection, String query) {
         final Integer size;
         final Integer offset;
         final String columnsString;
-        final List<String> columns = new ArrayList<String>();
+        List<String> columns = new ArrayList<String>();
         final Matcher limitedQueryMatcher = QUERY_LIMITED_PATTERN.matcher(query);
         final Matcher unlimitedQueryMatcher = QUERY_UNLIMITED_PATTERN.matcher(query);
-        if(limitedQueryMatcher.matches()){
+        if (limitedQueryMatcher.matches()) {
             columnsString = limitedQueryMatcher.group(1);
             final String offsetString = limitedQueryMatcher.group(2);
             final String sizeString = limitedQueryMatcher.group(4);
             size = sizeString != null ? Integer.valueOf(sizeString) : Integer.valueOf(offsetString);
             offset = sizeString != null ? Integer.valueOf(offsetString) : 0;
-        } else if(unlimitedQueryMatcher.matches()){
+        } else if (unlimitedQueryMatcher.matches()) {
             offset = 0;
             size = Integer.MAX_VALUE;
             columnsString = unlimitedQueryMatcher.group(1);
         } else {
             throw new RuntimeException("invalid query");
         }
-        for (String column :columnsString.split(",")){
-            columns.add(column.trim());
+        if (columnsString.trim().equals("*")) {
+            columns = null;
+        } else {
+            for (String column : columnsString.split(",")) {
+                columns.add(column.trim());
+            }
         }
         return read(connection, columns, size, offset);
     }
 
-     protected List<Map<String, Object>> read(JRCsvDataSource connection, List<String> columns, Integer size, Integer offset){
-         final List<Map<String, Object>> resultSet = new ArrayList<Map<String, Object>>();
-         boolean hasNext = true;
-         try {
-             if (offset > 0) for (int i = 0; hasNext && i < offset; i++) hasNext = connection.next();
-             for (int i = 0; i < size; i++) {
-                 if (connection.next()) {
-                     if (columns != null) {
-                         final Map<String, Object> row = new HashMap<String, Object>();
-                         for (String column : columns) {
-                             JRDesignField field = new JRDesignField();
-                             field.setName(column);
-                             try {
-                                 final Object value = connection.getFieldValue(field);
-                                 row.put(column, value);
-                             } catch (Exception e) {
-                                 throw new RuntimeException(e);
-                             }
-                         }
-                         resultSet.add(row);
-                     }
-                 } else {
-                     break;
-                 }
-             }
-         }catch (JRException e){
-             throw  new RuntimeException(e);
-         }
-         return resultSet;
-     }
+    protected List<Map<String, Object>> read(JRCsvDataSource connection, List<String> columns, Integer size, Integer offset) {
+        final List<Map<String, Object>> resultSet = new ArrayList<Map<String, Object>>();
+        boolean hasNext = true;
+        try {
+            if (offset > 0) for (int i = 0; hasNext && i < offset; i++) hasNext = connection.next();
+            for (int i = 0; i < size; i++) {
+                if (connection.next()) {
+                    if (columns == null) {
+                        columns = new ArrayList<String>(connection.getColumnNames().keySet());
+                    }
+                    final Map<String, Object> row = new HashMap<String, Object>();
+                    for (String column : columns) {
+                        JRDesignField field = new JRDesignField();
+                        field.setName(column);
+                        try {
+                            final Object value = connection.getFieldValue(field);
+                            row.put(column, value);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    resultSet.add(row);
+                } else {
+                    break;
+                }
+            }
+        } catch (JRException e) {
+            throw new RuntimeException(e);
+        }
+        return resultSet;
+    }
 }

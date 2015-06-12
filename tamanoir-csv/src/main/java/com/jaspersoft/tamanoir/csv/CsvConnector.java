@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * <p></p>
@@ -35,20 +36,36 @@ import java.net.URL;
  */
 public class CsvConnector implements Connector<JRCsvDataSource> {
     private static final String USE_FIRST_ROW_AS_HEADER = "useFirstRowAsHeader";
+
     @Override
     public JRCsvDataSource openConnection(ConnectionDescriptor descriptor) {
-        InputStream inputStream;
+        JRCsvDataSource dataSource;
         try {
-            inputStream = new URL(descriptor.getUrl().substring("csv:".length())).openStream();
-        } catch (IOException e) {
+            dataSource = new JRCsvDataSource(openStream(descriptor));
+            dataSource.setUseFirstRowAsHeader(true);
+            dataSource.next();
+            final Map<String, Integer> columnNames = dataSource.getColumnNames();
+            final String[] columnNamesArray = new String[columnNames.size()];
+            dataSource.close();
+            dataSource = new JRCsvDataSource(openStream(descriptor));
+            if (descriptor.getProperties() != null && descriptor.getProperties().containsKey(USE_FIRST_ROW_AS_HEADER)
+                    && "true".equalsIgnoreCase(descriptor.getProperties().get(USE_FIRST_ROW_AS_HEADER))) {
+                dataSource.setUseFirstRowAsHeader(true);
+            } else {
+                for(int i = 0; i < columnNames.size(); i++){
+                    columnNamesArray[i] = "COLUMN_" + i;
+                }
+                dataSource.setColumnNames(columnNamesArray);
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        JRCsvDataSource dataSource = new JRCsvDataSource(inputStream);
-        if(descriptor.getProperties() != null && descriptor.getProperties().containsKey(USE_FIRST_ROW_AS_HEADER)
-                && "true".equalsIgnoreCase(descriptor.getProperties().get(USE_FIRST_ROW_AS_HEADER))){
-            dataSource.setUseFirstRowAsHeader(true);
-        }
+
         return dataSource;
+    }
+
+    protected InputStream openStream(ConnectionDescriptor connectionDescriptor) throws IOException {
+        return new URL(connectionDescriptor.getUrl().substring("csv:".length())).openStream();
     }
 
     @Override
