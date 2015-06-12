@@ -31,12 +31,14 @@ import java.util.Map;
  */
 @XmlRootElement(name = "connection")
 public class ConnectionDescriptor {
+    private String type;
     private String url;
     private Map<String, String> properties;
 
     public ConnectionDescriptor(){}
     public ConnectionDescriptor(ConnectionDescriptor source){
         url = source.getUrl();
+        type = source.getType();
         if(source.getProperties() != null){
             properties = new HashMap<String, String>(source.getProperties());
         }
@@ -48,6 +50,14 @@ public class ConnectionDescriptor {
     public ConnectionDescriptor setProperties(Map<String, String> properties) {
         this.properties = properties;
         return this;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUrl() {
@@ -67,6 +77,7 @@ public class ConnectionDescriptor {
         ConnectionDescriptor that = (ConnectionDescriptor) o;
 
         if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
 
         return true;
@@ -74,7 +85,8 @@ public class ConnectionDescriptor {
 
     @Override
     public int hashCode() {
-        int result = url != null ? url.hashCode() : 0;
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         return result;
     }
@@ -82,7 +94,8 @@ public class ConnectionDescriptor {
     @Override
     public String toString() {
         return "ConnectionDescriptor{" +
-                "url='" + url + '\'' +
+                "type='" + type + '\'' +
+                ", url='" + url + '\'' +
                 ", properties=" + properties +
                 '}';
     }

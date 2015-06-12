@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.rest;
+package com.jaspersoft.tamanoir.web.rest;
 
 import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;

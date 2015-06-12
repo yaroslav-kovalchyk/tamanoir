@@ -5,6 +5,12 @@
 <web-app>
   <display-name>Tamanoir Web Application</display-name>
 
+    <listener>
+        <listener-class>
+            com.jaspersoft.tamanoir.web.ConnectionsRegistrar
+        </listener-class>
+    </listener>
+
     <filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
@@ -25,7 +31,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>com.jaspersoft.tamanoir.rest</param-value>
+            <param-value>com.jaspersoft.tamanoir.web.rest</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

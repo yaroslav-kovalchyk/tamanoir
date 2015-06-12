@@ -65,7 +65,7 @@ public class CsvConnector implements Connector<JRCsvDataSource> {
     }
 
     protected InputStream openStream(ConnectionDescriptor connectionDescriptor) throws IOException {
-        return new URL(connectionDescriptor.getUrl().substring("csv:".length())).openStream();
+        return new URL(connectionDescriptor.getUrl()).openStream();
     }
 
     @Override
