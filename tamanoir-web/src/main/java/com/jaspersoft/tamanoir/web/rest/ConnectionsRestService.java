@@ -24,6 +24,7 @@ import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -39,6 +40,9 @@ import javax.ws.rs.core.Response;
  */
 @Path("/connections")
 public class ConnectionsRestService {
+    @Context
+    ServletContext context;
+
     @POST
     @Consumes("application/json")
     public Response createConnection(ConnectionDescriptor connectionDescriptor, @HeaderParam("Accept") String accept, @Context final HttpServletRequest request){

@@ -20,6 +20,7 @@
 */
 package com.jaspersoft.tamanoir.csv;
 
+import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
@@ -58,7 +59,7 @@ public class CsvConnector implements Connector<JRCsvDataSource> {
                 dataSource.setColumnNames(columnNamesArray);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
 
         return dataSource;

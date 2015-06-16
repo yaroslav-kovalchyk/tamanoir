@@ -20,10 +20,14 @@
 */
 package com.jaspersoft.tamanoir.csv;
 
+import com.jaspersoft.tamanoir.ConnectionException;
+import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
-import net.sf.jasperreports.engine.JRException;
+import com.jaspersoft.tamanoir.connection.TableDataSet;
+import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
+import com.jaspersoft.tamanoir.dto.query.Select;
+import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
-import net.sf.jasperreports.engine.design.JRDesignField;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,13 +41,18 @@ import java.util.regex.Pattern;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource> {
+public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource, TableDataSet<UnifiedTableQuery>> {
     private final Pattern QUERY_LIMITED_PATTERN = Pattern.compile("select[\\s]*(.+)[\\s]*limit[\\s]*(\\d+)([\\s]*,[\\s]*(\\d+))*");
     private final Pattern QUERY_UNLIMITED_PATTERN = Pattern.compile("select[\\s]*(.+)"
     );
 
     @Override
     public Object executeQuery(JRCsvDataSource connection, String query) {
+        UnifiedTableQuery unifiedTableQuery = parseQuery(query);
+        return read(prepareDataSet(connection, unifiedTableQuery), connection, unifiedTableQuery.getSelect().getColumns());
+    }
+
+    protected UnifiedTableQuery parseQuery(String query){
         final Integer size;
         final Integer offset;
         final String columnsString;
@@ -61,7 +70,7 @@ public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource> {
             size = Integer.MAX_VALUE;
             columnsString = unlimitedQueryMatcher.group(1);
         } else {
-            throw new RuntimeException("invalid query");
+            throw new ConnectionException(new ErrorDescriptor().setCode("invalid.query").setMessage("invalid query"));
         }
         if (columnsString.trim().equals("*")) {
             columns = null;
@@ -70,37 +79,29 @@ public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource> {
                 columns.add(column.trim());
             }
         }
-        return read(connection, columns, size, offset);
+        return new UnifiedTableQuery().setOffset(offset).setLimit(size).setSelect(new Select().setColumns(columns));
     }
 
-    protected List<Map<String, Object>> read(JRCsvDataSource connection, List<String> columns, Integer size, Integer offset) {
+    protected TableDataSet<UnifiedTableQuery> prepareDataSet(JRCsvDataSource connection, UnifiedTableQuery query){
+        return  new UnifiedTableDataSet(connection).subset(query);
+    }
+
+    @Override
+    public TableDataSet<UnifiedTableQuery> prepareDataSet(JRCsvDataSource connection, String query) {
+        return prepareDataSet(connection, parseQuery(query));
+    }
+
+    protected List<Map<String, Object>> read(TableDataSet<UnifiedTableQuery> dataSet, JRCsvDataSource connection, List<String> columns) {
         final List<Map<String, Object>> resultSet = new ArrayList<Map<String, Object>>();
-        boolean hasNext = true;
-        try {
-            if (offset > 0) for (int i = 0; hasNext && i < offset; i++) hasNext = connection.next();
-            for (int i = 0; i < size; i++) {
-                if (connection.next()) {
-                    if (columns == null) {
-                        columns = new ArrayList<String>(connection.getColumnNames().keySet());
-                    }
-                    final Map<String, Object> row = new HashMap<String, Object>();
-                    for (String column : columns) {
-                        JRDesignField field = new JRDesignField();
-                        field.setName(column);
-                        try {
-                            final Object value = connection.getFieldValue(field);
-                            row.put(column, value);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    resultSet.add(row);
-                } else {
-                    break;
-                }
+        while (dataSet.next()){
+            if (columns == null) {
+                columns = new ArrayList<String>(connection.getColumnNames().keySet());
             }
-        } catch (JRException e) {
-            throw new RuntimeException(e);
+            final Map<String, Object> row = new HashMap<String, Object>();
+            for(String column : columns){
+                row.put(column, dataSet.getValue(column));
+            }
+            resultSet.add(row);
         }
         return resultSet;
     }

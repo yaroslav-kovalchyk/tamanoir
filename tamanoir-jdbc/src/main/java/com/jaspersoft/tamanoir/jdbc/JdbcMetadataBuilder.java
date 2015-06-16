@@ -20,6 +20,7 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
+import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.dto.MetadataElementItem;
 import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
@@ -54,8 +55,8 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
             for (Field f : fields) {
                 map.put((Integer)f.get(null), f.getName());
             }
-        } catch (Exception ex) {
-            throw new RuntimeException("Cannot access java.sql.Types !");
+        } catch (Exception e) {
+            throw new ConnectionException(e);
         }
         JDBC_TYPES_BY_CODE = Collections.unmodifiableMap(map);
     }
@@ -90,7 +91,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
 
         return result;
@@ -116,7 +117,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
         return tableItems;
     }
@@ -132,7 +133,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
                 result.add(new MetadataElementItem().setName(columnName).setType(JDBC_TYPES_BY_CODE.get(typeCode)));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
         return result;
     }

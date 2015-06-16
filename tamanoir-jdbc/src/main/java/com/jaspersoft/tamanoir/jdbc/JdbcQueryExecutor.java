@@ -20,7 +20,11 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
+import com.jaspersoft.tamanoir.ConnectionException;
+import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
+import com.jaspersoft.tamanoir.connection.TableDataSet;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,37 +41,67 @@ import java.util.Map;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcQueryExecutor implements QueryExecutor<Connection> {
+public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet> {
     @Override
     public Object executeQuery(Connection connection, String query) {
+        final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        try {
+
+            getResultSet(connection, query, new ResultSetCallback() {
+                @Override
+                public void resultSet(ResultSet resultSet) throws Exception {
+                    final ArrayList<String> columnNames = new ArrayList<String>();
+                    final ResultSetMetaData metaData = resultSet.getMetaData();
+                    for (int i = 1; i < metaData.getColumnCount(); i++) {
+                        columnNames.add(metaData.getColumnName(i));
+                    }
+                    while (resultSet.next()) {
+                        Map<String, Object> row = new HashMap<String, Object>();
+                        for (String columnName : columnNames) {
+                            row.put(columnName, resultSet.getString(columnName));
+                        }
+                        result.add(row);
+                    }
+                }
+            });
+
+
+        } catch (Exception e ) {
+            throw new ConnectionException(e);
+        }
+        return result;
+    }
+
+    protected ResultSet getResultSet(Connection connection, String query, ResultSetCallback callback){
         Statement stmt = null;
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        ResultSet resultSet = null;
         try {
             stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            final ResultSetMetaData metaData = rs.getMetaData();
-            ArrayList<String> columnNames = new ArrayList<String>();
-            for(int i = 1; i < metaData.getColumnCount(); i++){
-                columnNames.add(metaData.getColumnName(i));
-            }
-            while (rs.next()) {
-                Map<String, Object> row = new HashMap<String, Object>();
-                for(String columnName : columnNames){
-                    row.put(columnName, rs.getString(columnName));
-                }
-                result.add(row);
+            resultSet = stmt.executeQuery(query);
+            if(callback != null){
+                callback.resultSet(resultSet);
             }
         } catch (Exception e ) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         } finally {
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    throw new ConnectionException(e);
                 }
             }
         }
-        return result;
+        return resultSet;
+
+    }
+
+    @Override
+    public TableDataSet prepareDataSet(Connection connection, String query) {
+        return new UnifiedTableDataSet(new JRResultSetDataSource(getResultSet(connection, query, null)));
+    }
+
+    private interface ResultSetCallback{
+        void resultSet(ResultSet resultSet) throws Exception;
     }
 }

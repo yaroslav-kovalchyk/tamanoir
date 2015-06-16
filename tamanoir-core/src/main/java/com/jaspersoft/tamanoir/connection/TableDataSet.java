@@ -25,7 +25,9 @@ package com.jaspersoft.tamanoir.connection;
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface QueryExecutor<C,D extends DataSet> {
-    Object executeQuery(C connection, String query);
-    D prepareDataSet(C connection, String query);
+public interface TableDataSet<Q> extends DataSet<Q, TableDataSet<Q>> {
+    boolean next();
+    <T> T getValue(String name, Class<T> valueClass);
+    Object getValue(String name);
+
 }

@@ -20,12 +20,14 @@
 */
 package com.jaspersoft.tamanoir.connection;
 
+import com.jaspersoft.tamanoir.dto.MetadataItem;
+
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface QueryExecutor<C,D extends DataSet> {
-    Object executeQuery(C connection, String query);
-    D prepareDataSet(C connection, String query);
+public interface DataSet<Q,D extends DataSet<Q,D>> {
+    MetadataItem getMetadata();
+    D subset(Q query);
 }

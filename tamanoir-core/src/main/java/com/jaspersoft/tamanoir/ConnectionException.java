@@ -18,14 +18,27 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection;
+package com.jaspersoft.tamanoir;
+
+import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface QueryExecutor<C,D extends DataSet> {
-    Object executeQuery(C connection, String query);
-    D prepareDataSet(C connection, String query);
+public class ConnectionException extends RuntimeException {
+    private final ErrorDescriptor errorDescriptor;
+    public ConnectionException(ErrorDescriptor e){
+        errorDescriptor = e;
+    }
+    public ConnectionException (Exception e){
+        super(e);
+        errorDescriptor = new ErrorDescriptor().setCode("unexpected.error")
+                .setMessage("Unexpected exception occurs: " + e.getClass().getName() + ":" + e.getMessage());
+    }
+
+    public ErrorDescriptor getErrorDescriptor() {
+        return errorDescriptor;
+    }
 }

@@ -20,6 +20,7 @@
 */
 package com.jaspersoft.tamanoir.csv;
 
+import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.dto.MetadataElementItem;
 import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
@@ -44,7 +45,7 @@ public class CsvMetadataBuilder implements MetadataBuilder<JRCsvDataSource> {
                 connection.next();
                 columnNamesMap = connection.getColumnNames();
             } catch (JRException e) {
-                throw new RuntimeException(e);
+                throw new ConnectionException(e);
             }
         }
         final Set<String> columnNames = columnNamesMap.keySet();

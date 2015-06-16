@@ -25,6 +25,7 @@ import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
+import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 
 import java.util.HashMap;
@@ -68,7 +69,9 @@ public class ConnectionsManager {
     protected <T> T getProcessor(ConnectionDescriptor connectionDescriptor, Class<T> processorClass) {
         final ConnectionProcessorFactory connectionProcessorFactory = factories.get(connectionDescriptor.getType());
         if (connectionProcessorFactory == null) {
-            throw new RuntimeException("Processor type '" + processorClass.getName() + "' is not supported");
+            throw new ConnectionException(new ErrorDescriptor().setCode("unsupported.processor")
+                    .setMessage("Processor type '" + processorClass.getName() + "' is not supported")
+                    .setParameters(processorClass.getName()));
         }
         return connectionProcessorFactory.getProcessor(processorClass);
     }
@@ -82,7 +85,9 @@ public class ConnectionsManager {
             connection = connector.openConnection(connectionDescriptor);
             result = (R) ((ConnectionOperator) operator).operate(connection);
         } finally {
-            connector.closeConnection(connection);
+            if(connection != null) {
+                connector.closeConnection(connection);
+            }
         }
         return result;
     }

@@ -20,6 +20,7 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
+import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
@@ -52,7 +53,7 @@ public class JdbcConnector implements Connector<Connection>{
             Class.forName(driverClassName);
             connection = DriverManager.getConnection(descriptor.getUrl(), properties);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
         return connection;
     }
@@ -62,7 +63,7 @@ public class JdbcConnector implements Connector<Connection>{
         try {
             connection.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
     }
 

@@ -18,14 +18,14 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection;
+package com.jaspersoft.tamanoir.dto.query;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface QueryExecutor<C,D extends DataSet> {
-    Object executeQuery(C connection, String query);
-    D prepareDataSet(C connection, String query);
+public interface MatchingRule {
+    public boolean match(Object input);
+    public String getColumn();
 }

@@ -18,14 +18,29 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection;
+package com.jaspersoft.tamanoir.web.rest;
+
+import com.jaspersoft.tamanoir.ConnectionException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface QueryExecutor<C,D extends DataSet> {
-    Object executeQuery(C connection, String query);
-    D prepareDataSet(C connection, String query);
+@Provider
+public class ConnectionErrorExceptionMapper implements ExceptionMapper<ConnectionException> {
+    private final static Log log = LogFactory.getLog(ConnectionErrorExceptionMapper.class);
+    @Override
+    public Response toResponse(ConnectionException e) {
+        if(e.getCause() != null){
+            log.error("Unexpected error occur", e.getCause());
+        }
+        return Response.serverError().entity(e.getErrorDescriptor()).build();
+    }
 }
