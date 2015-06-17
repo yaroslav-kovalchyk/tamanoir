@@ -21,6 +21,8 @@
 package com.jaspersoft.tamanoir.web;
 
 import com.jaspersoft.tamanoir.ConnectionsManager;
+import com.jaspersoft.tamanoir.ConnectionsService;
+import com.jaspersoft.tamanoir.connection.storage.EhCacheConnectionStorage;
 import com.jaspersoft.tamanoir.csv.CsvConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.jdbc.JdbcConnectionProcessorFactory;
 
@@ -37,6 +39,7 @@ public class ConnectionsRegistrar implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         ConnectionsManager.registerConnection("csv", new CsvConnectionProcessorFactory());
         ConnectionsManager.registerConnection("jdbc", new JdbcConnectionProcessorFactory());
+        sce.getServletContext().setAttribute(ConnectionsService.class.getName(), new ConnectionsService(new EhCacheConnectionStorage()));
     }
 
     @Override

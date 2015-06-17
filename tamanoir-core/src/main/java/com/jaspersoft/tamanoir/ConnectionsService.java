@@ -66,4 +66,8 @@ public class ConnectionsService {
         return subset.getData();
     }
 
+    public QueryConnectionDescriptor getConnectionDescriptor(UUID uuid){
+        return storage.getConnection(uuid).getConnectionDescriptor();
+    }
+
 }

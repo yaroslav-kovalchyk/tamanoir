@@ -20,18 +20,26 @@
 */
 package com.jaspersoft.tamanoir.web.rest;
 
+import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.ConnectionsManager;
-import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
+import com.jaspersoft.tamanoir.ConnectionsService;
+import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.UUID;
 
 /**
  * <p></p>
@@ -42,26 +50,50 @@ import javax.ws.rs.core.Response;
 public class ConnectionsRestService {
     @Context
     ServletContext context;
+    @Context
+    private HttpServletRequest request;
 
     @POST
     @Consumes("application/json")
-    public Response createConnection(ConnectionDescriptor connectionDescriptor, @HeaderParam("Accept") String accept, @Context final HttpServletRequest request){
+    public Response createConnection(QueryConnectionDescriptor connectionDescriptor, @HeaderParam("Accept") String accept, @Context final HttpServletRequest request){
+        final UUID uuid = getConnectionService().saveConnectionDescriptor(connectionDescriptor);
         ConnectionsManager connectionsManager = new ConnectionsManager();
-        final Response response;
+        final Response.ResponseBuilder response;
+        try {
+            response = Response.created(new URI(request.getRequestURL().append("/").append(uuid.toString()).toString()));
+        } catch (URISyntaxException e) {
+            throw new ConnectionException(e);
+        }
+
         if(accept != null && accept.toLowerCase().contains("metadata")){
-            response = Response.ok(connectionsManager.buildConnectionMetadata(connectionDescriptor, request.getParameterMap())).build();
+            response.entity(connectionsManager.buildConnectionMetadata(connectionDescriptor, request.getParameterMap()));
 
         } else {
             connectionsManager.testConnection(connectionDescriptor);
-            response = Response.ok(connectionDescriptor).build();
+            response.entity(connectionDescriptor);
         }
-        return response;
+        return response.build();
     }
 
     @POST
     @Consumes("application/queryconnection+json")
     public Response executeQuery(QueryConnectionDescriptor queryConnectionDescriptor){
         return Response.ok(new ConnectionsManager().executeQuery(queryConnectionDescriptor)).build();
+    }
+    @GET
+    @Path("/{uuid}")
+    @Produces("application/json")
+    public Response getConnectionDescription(@PathParam("uuid")UUID uuid){
+        return Response.ok(getConnectionService().getConnectionDescriptor(uuid)).build();
+    }
+
+    protected ConnectionsService getConnectionService(){
+        final ConnectionsService connectionsService = (ConnectionsService) context.getAttribute(ConnectionsService.class.getName());
+        if(connectionsService == null){
+            throw new ConnectionException(new ErrorDescriptor().setCode("connections.service.not.initialized")
+                    .setMessage("Connections service isn't initialized"));
+        }
+        return connectionsService;
     }
 
 }
