@@ -18,8 +18,10 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection.storage;
+package com.jaspersoft.tamanoir.web;
 
+import com.jaspersoft.tamanoir.connection.storage.ConnectionContainer;
+import com.jaspersoft.tamanoir.connection.storage.ConnectionsStorage;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -32,13 +34,13 @@ import java.util.UUID;
  * @author Yaroslav.Kovalchyk
  */
 public class EhCacheConnectionStorage implements ConnectionsStorage {
+    public static final String CONNECTIONS_CACHE_NAME = "connections";
     private final Cache cache;
 
 
     public EhCacheConnectionStorage(){
         CacheManager cacheManager = CacheManager.getInstance();
-        cacheManager.addCache("connections");
-        cache = cacheManager.getCache("connections");
+        cache = cacheManager.getCache(CONNECTIONS_CACHE_NAME);
     }
 
     @Override
@@ -52,5 +54,9 @@ public class EhCacheConnectionStorage implements ConnectionsStorage {
     public ConnectionContainer getConnection(UUID uuid) {
         final Element element = cache.get(uuid);
         return element != null ? (ConnectionContainer) element.getObjectValue() : null;
+    }
+
+    public void shutdown(){
+        CacheManager.getInstance().shutdown();
     }
 }
