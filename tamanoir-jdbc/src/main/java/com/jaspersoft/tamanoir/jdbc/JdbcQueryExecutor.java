@@ -24,6 +24,7 @@ import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
+import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 
 import java.sql.Connection;
@@ -98,7 +99,8 @@ public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet
 
     @Override
     public TableDataSet prepareDataSet(Connection connection, String query) {
-        return new UnifiedTableDataSet(new JRResultSetDataSource(getResultSet(connection, query, null)));
+        final JRResultSetDataSource jrDataSource = new JRResultSetDataSource(getResultSet(connection, query, null));
+        return new UnifiedTableDataSet(jrDataSource, (MetadataGroupItem) new JdbcMetadataBuilder().build(connection, null));
     }
 
     private interface ResultSetCallback{

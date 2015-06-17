@@ -22,6 +22,7 @@ package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.ConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.connection.Connector;
+import com.jaspersoft.tamanoir.connection.DataSet;
 import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
@@ -62,6 +63,15 @@ public class ConnectionsManager {
             @Override
             public Object operate(Object connection) {
                 return getProcessor(queryConnectionDescriptor, QueryExecutor.class).executeQuery(connection, queryConnectionDescriptor.getNativeQuery());
+            }
+        });
+    }
+
+    public <T extends DataSet> T prepareDataSet(final QueryConnectionDescriptor connectionDescriptor){
+        return operateConnection(connectionDescriptor, new ConnectionOperator<T>() {
+            @Override
+            public T operate(Object connection) {
+                return (T) getProcessor(connectionDescriptor, QueryExecutor.class).prepareDataSet(connection, connectionDescriptor.getNativeQuery());
             }
         });
     }

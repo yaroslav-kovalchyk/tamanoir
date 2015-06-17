@@ -22,11 +22,14 @@ package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.TableDataSet;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
+import com.jaspersoft.tamanoir.dto.MetadataElementItem;
+import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.MatchingRule;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -34,7 +37,7 @@ import java.util.List;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class UnifiedTableSubSet implements TableDataSet<UnifiedTableQuery> {
+public class UnifiedTableSubSet extends AbstractTableDataSet {
     private final TableDataSet<UnifiedTableQuery> parent;
     private Integer current = -1;
     private Integer pageCurrent = -1;
@@ -106,8 +109,18 @@ public class UnifiedTableSubSet implements TableDataSet<UnifiedTableQuery> {
 
     @Override
     public MetadataItem getMetadata() {
-        // to be implemented later
-        return null;
+        final MetadataGroupItem metadata = new MetadataGroupItem ((MetadataGroupItem) parent.getMetadata());
+        final List<MetadataElementItem> columnsMetadata = (List)metadata.getItems();
+        final Iterator<MetadataElementItem> iterator = columnsMetadata.iterator();
+        if(columns != null && !columns.isEmpty()) {
+            for (; iterator.hasNext(); ) {
+                final MetadataElementItem column = iterator.next();
+                if (!columns.contains(column.getName())) {
+                    iterator.remove();
+                }
+            }
+        }
+        return metadata;
     }
 
     @Override

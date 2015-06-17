@@ -51,6 +51,10 @@ public class CsvConnector implements Connector<JRCsvDataSource> {
             dataSource = new JRCsvDataSource(openStream(descriptor));
             if (descriptor.getProperties() != null && descriptor.getProperties().containsKey(USE_FIRST_ROW_AS_HEADER)
                     && "true".equalsIgnoreCase(descriptor.getProperties().get(USE_FIRST_ROW_AS_HEADER))) {
+                for(Map.Entry<String, Integer> entry : columnNames.entrySet()){
+                    columnNamesArray[entry.getValue()] = entry.getKey();
+                }
+                dataSource.setColumnNames(columnNamesArray);
                 dataSource.setUseFirstRowAsHeader(true);
             } else {
                 for(int i = 0; i < columnNames.size(); i++){

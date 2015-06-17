@@ -25,14 +25,14 @@ import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
+import com.jaspersoft.tamanoir.dto.MetadataElementItem;
+import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.query.Select;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,8 +48,7 @@ public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource, TableDat
 
     @Override
     public Object executeQuery(JRCsvDataSource connection, String query) {
-        UnifiedTableQuery unifiedTableQuery = parseQuery(query);
-        return read(prepareDataSet(connection, unifiedTableQuery), connection, unifiedTableQuery.getSelect().getColumns());
+        return prepareDataSet(connection, parseQuery(query)).getData();
     }
 
     protected UnifiedTableQuery parseQuery(String query){
@@ -83,26 +82,15 @@ public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource, TableDat
     }
 
     protected TableDataSet<UnifiedTableQuery> prepareDataSet(JRCsvDataSource connection, UnifiedTableQuery query){
-        return  new UnifiedTableDataSet(connection).subset(query);
+        MetadataGroupItem group = new MetadataGroupItem().setName("root");
+        for (String columnName : connection.getColumnNames().keySet()) {
+            group.addItem(new MetadataElementItem().setName(columnName).setType(String.class.getName()));
+        }
+        return  new UnifiedTableDataSet(connection, group).subset(query);
     }
 
     @Override
     public TableDataSet<UnifiedTableQuery> prepareDataSet(JRCsvDataSource connection, String query) {
         return prepareDataSet(connection, parseQuery(query));
-    }
-
-    protected List<Map<String, Object>> read(TableDataSet<UnifiedTableQuery> dataSet, JRCsvDataSource connection, List<String> columns) {
-        final List<Map<String, Object>> resultSet = new ArrayList<Map<String, Object>>();
-        while (dataSet.next()){
-            if (columns == null) {
-                columns = new ArrayList<String>(connection.getColumnNames().keySet());
-            }
-            final Map<String, Object> row = new HashMap<String, Object>();
-            for(String column : columns){
-                row.put(column, dataSet.getValue(column));
-            }
-            resultSet.add(row);
-        }
-        return resultSet;
     }
 }

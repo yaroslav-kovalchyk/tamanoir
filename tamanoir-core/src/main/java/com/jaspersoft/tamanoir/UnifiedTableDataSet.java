@@ -21,6 +21,7 @@
 package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.TableDataSet;
+import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -32,10 +33,12 @@ import net.sf.jasperreports.engine.design.JRDesignField;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class UnifiedTableDataSet implements TableDataSet<UnifiedTableQuery> {
+public class UnifiedTableDataSet extends AbstractTableDataSet {
     private final JRDataSource jrDataSource;
-    public UnifiedTableDataSet(JRDataSource jrDataSource){
+    private final MetadataGroupItem metadata;
+    public UnifiedTableDataSet(JRDataSource jrDataSource, MetadataGroupItem metadata){
         this.jrDataSource = jrDataSource;
+        this.metadata = metadata;
     }
     @Override
     public boolean next() {
@@ -68,8 +71,7 @@ public class UnifiedTableDataSet implements TableDataSet<UnifiedTableQuery> {
 
     @Override
     public MetadataItem getMetadata() {
-        // to be implemented later
-        return null;
+        return metadata;
     }
 
     @Override

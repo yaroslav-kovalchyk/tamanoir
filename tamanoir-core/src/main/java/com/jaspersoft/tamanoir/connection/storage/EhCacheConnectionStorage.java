@@ -18,17 +18,39 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection;
+package com.jaspersoft.tamanoir.connection.storage;
 
-import com.jaspersoft.tamanoir.dto.MetadataItem;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
+import java.util.UUID;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface DataSet<Q,D extends DataSet<Q,D>> {
-    MetadataItem getMetadata();
-    Object getData();
-    D subset(Q query);
+public class EhCacheConnectionStorage implements ConnectionsStorage {
+    private final Cache cache;
+
+
+    public EhCacheConnectionStorage(){
+        CacheManager cacheManager = CacheManager.getInstance();
+        cacheManager.addCache("connections");
+        cache = cacheManager.getCache("connections");
+    }
+
+    @Override
+    public UUID storeConnection(ConnectionContainer connectionContainer) {
+        final UUID uuid = UUID.randomUUID();
+        cache.put(new Element(uuid, connectionContainer.setUuid(uuid)));
+        return uuid;
+    }
+
+    @Override
+    public ConnectionContainer getConnection(UUID uuid) {
+        final Element element = cache.get(uuid);
+        return element != null ? (ConnectionContainer) element.getObjectValue() : null;
+    }
 }

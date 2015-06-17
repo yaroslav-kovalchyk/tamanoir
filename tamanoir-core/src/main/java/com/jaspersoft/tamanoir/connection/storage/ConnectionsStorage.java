@@ -18,17 +18,16 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection;
+package com.jaspersoft.tamanoir.connection.storage;
 
-import com.jaspersoft.tamanoir.dto.MetadataItem;
+import java.util.UUID;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface DataSet<Q,D extends DataSet<Q,D>> {
-    MetadataItem getMetadata();
-    Object getData();
-    D subset(Q query);
+public interface ConnectionsStorage {
+    UUID storeConnection(ConnectionContainer connectionContainer);
+    ConnectionContainer getConnection(UUID uuid);
 }
