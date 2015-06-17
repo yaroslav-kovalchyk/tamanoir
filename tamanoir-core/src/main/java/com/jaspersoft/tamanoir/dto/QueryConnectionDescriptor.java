@@ -27,11 +27,22 @@ package com.jaspersoft.tamanoir.dto;
  */
 public class QueryConnectionDescriptor extends ConnectionDescriptor {
     private String nativeQuery;
+    private String name;
 
     public QueryConnectionDescriptor(){super();}
     public QueryConnectionDescriptor(QueryConnectionDescriptor source){
         super(source);
         nativeQuery = source.getNativeQuery();
+        name = source.getName();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public QueryConnectionDescriptor setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getNativeQuery() {
@@ -50,6 +61,7 @@ public class QueryConnectionDescriptor extends ConnectionDescriptor {
 
         QueryConnectionDescriptor that = (QueryConnectionDescriptor) o;
 
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (nativeQuery != null ? !nativeQuery.equals(that.nativeQuery) : that.nativeQuery != null) return false;
 
         return true;
@@ -59,6 +71,7 @@ public class QueryConnectionDescriptor extends ConnectionDescriptor {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (nativeQuery != null ? nativeQuery.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 
@@ -66,6 +79,7 @@ public class QueryConnectionDescriptor extends ConnectionDescriptor {
     public String toString() {
         return "QueryConnectionDescriptor{" +
                 "nativeQuery='" + nativeQuery + '\'' +
+                ", name='" + name + '\'' +
                 "} " + super.toString();
     }
 }
