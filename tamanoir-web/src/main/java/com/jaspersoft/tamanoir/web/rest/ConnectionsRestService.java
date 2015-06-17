@@ -25,6 +25,7 @@ import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.ConnectionsService;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
+import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -85,6 +86,14 @@ public class ConnectionsRestService {
     @Produces("application/json")
     public Response getConnectionDescription(@PathParam("uuid")UUID uuid){
         return Response.ok(getConnectionService().getConnectionDescriptor(uuid)).build();
+    }
+
+    @POST
+    @Path("/{uuid}")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response executeUnifiedQuery(@PathParam("uuid")UUID connectionUuid, UnifiedTableQuery query){
+        return Response.ok(getConnectionService().executeUnifiedQuery(connectionUuid, query)).build();
     }
 
     protected ConnectionsService getConnectionService(){

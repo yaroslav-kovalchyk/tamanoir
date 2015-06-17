@@ -21,7 +21,6 @@
 package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.DataSet;
-import com.jaspersoft.tamanoir.connection.TableDataSet;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionContainer;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionsStorage;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
@@ -61,9 +60,7 @@ public class ConnectionsService {
     }
 
     public Object executeUnifiedQuery(UUID connectionUuid, UnifiedTableQuery query){
-        final UnifiedTableDataSet dataSet = storage.getConnection(connectionUuid).getDataSet();
-        final TableDataSet<UnifiedTableQuery> subset = dataSet.subset(query);
-        return subset.getData();
+        return getDataSet(connectionUuid).subset(query).getData();
     }
 
     public QueryConnectionDescriptor getConnectionDescriptor(UUID uuid){
