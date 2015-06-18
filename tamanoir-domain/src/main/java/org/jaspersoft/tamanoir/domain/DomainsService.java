@@ -104,13 +104,13 @@ public class DomainsService {
 
     protected void validate(Domain domain){
         if(domain.getName() == null){
-            throw new ConnectionException(new ErrorDescriptor().setCode("no.domain.name").setMessage("Domain name is required"));
+            throw new ConnectionException(new ErrorDescriptor().setCode("domain.name.required").setMessage("Domain name is required"));
         }
         if(domain.getType() == null){
-            throw new ConnectionException(new ErrorDescriptor().setCode("no.domain.type").setMessage("Domain type is required"));
+            throw new ConnectionException(new ErrorDescriptor().setCode("domain.type.required").setMessage("Domain type is required"));
         }
         if(domain.getUrl() == null){
-            throw new ConnectionException(new ErrorDescriptor().setCode("no.domain.url").setMessage("Domain URL is required"));
+            throw new ConnectionException(new ErrorDescriptor().setCode("domain.url.required").setMessage("Domain URL is required"));
         }
     }
 
