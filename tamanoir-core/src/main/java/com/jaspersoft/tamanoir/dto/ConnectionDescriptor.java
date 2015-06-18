@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Yaroslav.Kovalchyk
  */
 @XmlRootElement(name = "connection")
-public class ConnectionDescriptor {
+public class ConnectionDescriptor<T extends ConnectionDescriptor<T>> {
     private String type;
     private String url;
     private Map<String, String> properties;
@@ -47,26 +47,27 @@ public class ConnectionDescriptor {
         return properties;
     }
 
-    public ConnectionDescriptor setProperties(Map<String, String> properties) {
+    public T setProperties(Map<String, String> properties) {
         this.properties = properties;
-        return this;
+        return (T) this;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public T setType(String type) {
         this.type = type;
+        return (T) this;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public ConnectionDescriptor setUrl(String url) {
+    public T setUrl(String url) {
         this.url = url;
-        return this;
+        return (T) this;
     }
 
     @Override

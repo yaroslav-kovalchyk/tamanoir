@@ -13,5 +13,6 @@
         <module>tamanoir-web</module>
         <module>tamanoir-jdbc</module>
         <module>tamanoir-csv</module>
+        <module>tamanoir-domain</module>
     </modules>
 </project>
