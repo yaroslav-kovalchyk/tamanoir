@@ -24,6 +24,7 @@ import com.jaspersoft.tamanoir.ConnectionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -38,6 +39,9 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
     private final static Log log = LogFactory.getLog(GenericExceptionMapper.class);
     @Override
     public Response toResponse(Exception e) {
+        if(e instanceof WebApplicationException){
+            return ((WebApplicationException) e).getResponse();
+        }
         log.error("Unexpected error occur", e);
         return Response.serverError().entity(new ConnectionException(e).getErrorDescriptor()).build();
     }

@@ -26,6 +26,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
@@ -39,7 +41,7 @@ import java.util.Map;
 @Entity
 public class Domain extends QueryConnectionDescriptor<Domain> {
     private String name;
-    private String id;
+    private Long id;
 
     public Domain(){super();}
     public Domain(Domain source){
@@ -48,11 +50,12 @@ public class Domain extends QueryConnectionDescriptor<Domain> {
         id = source.getId();
     }
     @Id
-    public String getId() {
+    @GeneratedValue
+    public Long getId() {
         return id;
     }
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="name")
     @Column(name="value")
     @CollectionTable(name="connection_properties", joinColumns=@JoinColumn(name="connection_id"))
@@ -61,7 +64,26 @@ public class Domain extends QueryConnectionDescriptor<Domain> {
         return super.getProperties();
     }
 
-    public Domain setId(String id) {
+
+    @Column
+    @Override
+    public String getNativeQuery() {
+        return super.getNativeQuery();
+    }
+
+    @Column
+    @Override
+    public String getType() {
+        return super.getType();
+    }
+
+    @Column
+    @Override
+    public String getUrl() {
+        return super.getUrl();
+    }
+
+    public Domain setId(Long id) {
         this.id = id;
         return this;
     }

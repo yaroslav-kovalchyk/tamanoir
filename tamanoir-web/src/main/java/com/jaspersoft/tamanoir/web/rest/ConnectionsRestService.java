@@ -56,16 +56,10 @@ public class ConnectionsRestService {
 
     @POST
     @Consumes("application/json")
-    public Response createConnection(QueryConnectionDescriptor connectionDescriptor, @HeaderParam("Accept") String accept, @Context final HttpServletRequest request){
+    public Response createConnection(QueryConnectionDescriptor connectionDescriptor, @HeaderParam("Accept") String accept, @Context final HttpServletRequest request) throws URISyntaxException {
         final UUID uuid = getConnectionService().saveConnectionDescriptor(connectionDescriptor);
         ConnectionsManager connectionsManager = new ConnectionsManager();
-        final Response.ResponseBuilder response;
-        try {
-            response = Response.created(new URI(request.getRequestURL().append("/").append(uuid.toString()).toString()));
-        } catch (URISyntaxException e) {
-            throw new ConnectionException(e);
-        }
-
+        final Response.ResponseBuilder response = Response.created(new URI(request.getRequestURL().append("/").append(uuid.toString()).toString()));
         if(accept != null && accept.toLowerCase().contains("metadata")){
             response.entity(connectionsManager.buildConnectionMetadata(connectionDescriptor, request.getParameterMap()));
 
@@ -95,6 +89,7 @@ public class ConnectionsRestService {
     public Response executeUnifiedQuery(@PathParam("uuid")UUID connectionUuid, UnifiedTableQuery query){
         return Response.ok(getConnectionService().executeUnifiedQuery(connectionUuid, query)).build();
     }
+
 
     protected ConnectionsService getConnectionService(){
         final ConnectionsService connectionsService = (ConnectionsService) context.getAttribute(ConnectionsService.class.getName());

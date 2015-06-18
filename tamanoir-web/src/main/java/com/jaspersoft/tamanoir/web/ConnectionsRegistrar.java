@@ -26,6 +26,9 @@ import com.jaspersoft.tamanoir.csv.CsvConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.jdbc.JdbcConnectionProcessorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.jaspersoft.tamanoir.domain.DomainsService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -39,20 +42,24 @@ public class ConnectionsRegistrar implements ServletContextListener {
     private final static Log log = LogFactory.getLog(ConnectionsRegistrar.class);
 
     private EhCacheConnectionStorage storage;
+    private SessionFactory sessionFactory;
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ConnectionsManager.registerConnection("csv", new CsvConnectionProcessorFactory());
         ConnectionsManager.registerConnection("jdbc", new JdbcConnectionProcessorFactory());
         try {
             storage = new EhCacheConnectionStorage();
+            sessionFactory = new Configuration().configure().buildSessionFactory();
         }catch (Exception e){
             log.error("Unexpected error occur", e);
         }
         sce.getServletContext().setAttribute(ConnectionsService.class.getName(), new ConnectionsService(storage));
+        sce.getServletContext().setAttribute(DomainsService.class.getName(), new DomainsService(sessionFactory));
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         storage.shutdown();
+        sessionFactory.close();
     }
 }
