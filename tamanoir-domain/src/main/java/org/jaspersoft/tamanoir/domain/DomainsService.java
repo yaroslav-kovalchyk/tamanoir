@@ -25,7 +25,8 @@ import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p></p>
@@ -81,11 +82,11 @@ public class DomainsService {
         });
     }
 
-    public List<Domain> readAllDomains(){
-        return doInTransaction(new SessionCallback<List<Domain>>() {
+    public Set<Domain> readAllDomains(){
+        return doInTransaction(new SessionCallback<Set<Domain>>() {
             @Override
-            public List<Domain> session(Session session) {
-                return session.createCriteria(Domain.class).list();
+            public Set<Domain> session(Session session) {
+                return new HashSet<Domain>(session.createCriteria(Domain.class).list());
             }
         });
     }

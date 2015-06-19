@@ -39,7 +39,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * <p></p>
@@ -68,7 +68,7 @@ public class DomainsRestService {
 
     @GET
     @Produces("application/json")
-    public List<Domain> readAllDomains(){
+    public Set<Domain> readAllDomains(){
         return getDomainsService().readAllDomains();
     }
 
