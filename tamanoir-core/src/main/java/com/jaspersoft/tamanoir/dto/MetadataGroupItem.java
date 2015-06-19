@@ -31,7 +31,7 @@ import java.util.List;
  */
 @XmlRootElement(name = "group")
 public class MetadataGroupItem extends MetadataItem<MetadataGroupItem> {
-    private List<MetadataItem> items = new ArrayList<MetadataItem>();
+    private List<MetadataItem> items;
 
     public MetadataGroupItem(){
         super();
@@ -54,6 +54,9 @@ public class MetadataGroupItem extends MetadataItem<MetadataGroupItem> {
     }
 
     public MetadataGroupItem addItem(MetadataItem item){
+        if(items == null){
+            items = new ArrayList<MetadataItem>();
+        }
         items.add(item);
         return this;
     }

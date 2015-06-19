@@ -63,7 +63,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
 
     @Override
     public MetadataItem build(Connection connection, Map<String, String[]> options) {
-        final MetadataGroupItem result = new MetadataGroupItem().setName("root").setLabel("root");
+        final MetadataGroupItem result = new MetadataGroupItem().setName("root");
         final String[] expands = options.get("expand");
         final Map<String, List<String[]>> expandsMap = new HashMap<String, List<String[]>>();
         if(expands != null){
@@ -84,7 +84,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
             final ResultSet schemas = metaData.getSchemas();
             while (schemas.next()) {
                 String schema = schemas.getString("TABLE_SCHEM");
-                final MetadataGroupItem schemaItem = new MetadataGroupItem().setName(schema).setLabel(schema);
+                final MetadataGroupItem schemaItem = new MetadataGroupItem().setName(schema);
                 result.addItem(schemaItem);
                 if(expandsMap.containsKey(schema)){
                     schemaItem.setItems(expandSchema(schema, expandsMap.get(schema), metaData));
