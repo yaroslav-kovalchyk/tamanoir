@@ -127,10 +127,31 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
         final List<MetadataItem> result = new ArrayList<MetadataItem>();
         try {
             columns = metaData.getColumns(null, schema, table, null);
+            ResultSet primaryKeySet = metaData.getPrimaryKeys(null, schema, table);
+            List<String> primaryKeys = new ArrayList<String>();
+            while (primaryKeySet.next()){
+                primaryKeys.add(primaryKeySet.getString(4));
+            }
+            final ResultSet foreignKeysSet = metaData.getImportedKeys(null, schema, table);
+            Map<String, String> foreignKeyMap = new HashMap<String, String>();
+            while (foreignKeysSet.next()){
+                String foreignKeyColumnName = foreignKeysSet.getString("FKCOLUMN_NAME");
+                String primaryKeyTableName = foreignKeysSet.getString("PKTABLE_NAME");
+                String primaryKeyColumnName = foreignKeysSet.getString("PKCOLUMN_NAME");
+                String primaryKeySchemaName = foreignKeysSet.getString("PKTABLE_SCHEM");
+                foreignKeyMap.put(foreignKeyColumnName, primaryKeySchemaName + "." + primaryKeyTableName + "." + primaryKeyColumnName);
+            }
             while (columns.next()){
                 final String columnName = columns.getString("COLUMN_NAME");
                 int typeCode = columns.getInt("DATA_TYPE");
-                result.add(new MetadataElementItem().setName(columnName).setType(JDBC_TYPES_BY_CODE.get(typeCode)));
+                final MetadataElementItem columnItem = new MetadataElementItem().setName(columnName).setType(JDBC_TYPES_BY_CODE.get(typeCode));
+                if(primaryKeys.contains(columnName)){
+                    columnItem.setIsIdentifier(true);
+                }
+                if(foreignKeyMap.containsKey(columnName)){
+                    columnItem.setReferenceTo(foreignKeyMap.get(columnName));
+                }
+                result.add(columnItem);
             }
         } catch (SQLException e) {
             throw new ConnectionException(e);

@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "element")
 public class MetadataElementItem extends MetadataItem<MetadataElementItem> {
     private String type;
+    private Boolean isIdentifier;
+    private String referenceTo;
 
     public MetadataElementItem() {
         super();
@@ -37,7 +39,27 @@ public class MetadataElementItem extends MetadataItem<MetadataElementItem> {
 
     public MetadataElementItem(MetadataElementItem source) {
         super(source);
-        this.type = source.getType();
+        type = source.getType();
+        isIdentifier = source.getIsIdentifier();
+        referenceTo = source.getReferenceTo();
+    }
+
+    public Boolean getIsIdentifier() {
+        return isIdentifier;
+    }
+
+    public MetadataElementItem setIsIdentifier(Boolean isIdentifier) {
+        this.isIdentifier = isIdentifier;
+        return this;
+    }
+
+    public String getReferenceTo() {
+        return referenceTo;
+    }
+
+    public MetadataElementItem setReferenceTo(String referenceTo) {
+        this.referenceTo = referenceTo;
+        return this;
     }
 
     public String getType() {
@@ -55,9 +77,11 @@ public class MetadataElementItem extends MetadataItem<MetadataElementItem> {
         if (!(o instanceof MetadataElementItem)) return false;
         if (!super.equals(o)) return false;
 
-        MetadataElementItem that = (MetadataElementItem) o;
+        MetadataElementItem item = (MetadataElementItem) o;
 
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (isIdentifier != null ? !isIdentifier.equals(item.isIdentifier) : item.isIdentifier != null) return false;
+        if (referenceTo != null ? !referenceTo.equals(item.referenceTo) : item.referenceTo != null) return false;
+        if (type != null ? !type.equals(item.type) : item.type != null) return false;
 
         return true;
     }
@@ -66,6 +90,8 @@ public class MetadataElementItem extends MetadataItem<MetadataElementItem> {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (isIdentifier != null ? isIdentifier.hashCode() : 0);
+        result = 31 * result + (referenceTo != null ? referenceTo.hashCode() : 0);
         return result;
     }
 
@@ -73,6 +99,8 @@ public class MetadataElementItem extends MetadataItem<MetadataElementItem> {
     public String toString() {
         return "MetadataElementItem{" +
                 "type='" + type + '\'' +
+                ", isIdentifier=" + isIdentifier +
+                ", referenceTo='" + referenceTo + '\'' +
                 "} " + super.toString();
     }
 }
