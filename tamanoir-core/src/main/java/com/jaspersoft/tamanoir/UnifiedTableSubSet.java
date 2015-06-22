@@ -71,9 +71,9 @@ public class UnifiedTableSubSet extends AbstractTableDataSet {
             } else {
                 do {
                     hasNext = parent.next();
-                    current++;
-                    pageCurrent++;
                 } while (hasNext && !matchRow());
+                current++;
+                pageCurrent++;
             }
         }
         return hasNext;
