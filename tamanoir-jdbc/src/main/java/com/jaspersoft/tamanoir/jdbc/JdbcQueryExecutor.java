@@ -55,7 +55,7 @@ public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet
                 public void resultSet(ResultSet resultSet) throws Exception {
                     final ArrayList<String> columnNames = new ArrayList<String>();
                     final ResultSetMetaData metaData = resultSet.getMetaData();
-                    for (int i = 1; i < metaData.getColumnCount(); i++) {
+                    for (int i = 1; i < metaData.getColumnCount() + 1; i++) {
                         columnNames.add(metaData.getColumnName(i));
                     }
                     while (resultSet.next()) {
