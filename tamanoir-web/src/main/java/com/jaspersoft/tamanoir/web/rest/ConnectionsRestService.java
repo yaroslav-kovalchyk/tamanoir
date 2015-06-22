@@ -76,6 +76,13 @@ public class ConnectionsRestService {
         return Response.ok(new ConnectionsManager().executeQuery(queryConnectionDescriptor)).build();
     }
     @GET
+    @Path("/{uuid}/metadata")
+    @Produces("application/json")
+    public Response getDataSetMetadata(@PathParam("uuid")UUID uuid){
+        return Response.ok(getConnectionService().getDataSetMetadata(uuid)).build();
+    }
+
+    @GET
     @Path("/{uuid}")
     @Produces("application/json")
     public Response getConnectionDescription(@PathParam("uuid")UUID uuid){
