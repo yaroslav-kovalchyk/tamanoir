@@ -20,9 +20,12 @@
 */
 package com.jaspersoft.tamanoir.web.rest;
 
+import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -40,6 +43,10 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
     public ObjectMapper getContext(Class<?> aClass) {
         if(objectMapper == null){
             objectMapper = new ObjectMapper();
+            AnnotationIntrospector primary = new JaxbAnnotationIntrospector();
+            AnnotationIntrospector secondary =  new JacksonAnnotationIntrospector();
+            AnnotationIntrospector pair = new AnnotationIntrospector.Pair(primary, secondary);
+            objectMapper.setAnnotationIntrospector(pair);
             objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             objectMapper.getSerializationConfig().setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         }

@@ -53,7 +53,7 @@ public class UnifiedTableSubSet extends AbstractTableDataSet {
 
         this.limit = queryClone.getLimit() != null ? queryClone.getLimit() : Integer.MAX_VALUE;
         this.offset = queryClone.getOffset() != null ? queryClone.getOffset() : 0;
-        columns = queryClone.getSelect().getColumns();
+        columns = queryClone.getSelect() != null ? queryClone.getSelect().getColumns() : null;
         matchingRules = queryClone.getWhere() != null ? query.getWhere().getMatchingRules() : null;
     }
     @Override
