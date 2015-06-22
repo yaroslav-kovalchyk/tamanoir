@@ -18,20 +18,21 @@
 * You should have received a copy of the GNU Affero General Public  License
 * along with this program.&nbsp; If not, see <http://www.gnu.org/licenses/>.
 */
-package com.jaspersoft.tamanoir.connection;
+package com.jaspersoft.tamanoir;
 
-import java.util.Collection;
-import java.util.Map;
+import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 
 /**
  * <p></p>
  *
  * @author Yaroslav.Kovalchyk
  */
-public interface TableDataSet<Q> extends DataSet<Q, TableDataSet<Q>> {
-    boolean next();
-    <T> T getValue(String name, Class<T> valueClass);
-    Object getValue(String name);
-    Collection<Map<String, ?>> getTableData();
+public class ConnectionNotFoundException extends ConnectionException {
+    public ConnectionNotFoundException(ErrorDescriptor e) {
+        super(e);
+    }
 
+    public ConnectionNotFoundException(String connectionId){
+        this(new ErrorDescriptor().setCode("connection.not.found").setMessage("Connection '" + connectionId + "' isn't found").setParameters(connectionId));
+    }
 }

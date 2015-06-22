@@ -20,6 +20,7 @@
 */
 package com.jaspersoft.tamanoir.web;
 
+import com.jaspersoft.tamanoir.ConnectionNotFoundException;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionContainer;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionsStorage;
 import net.sf.ehcache.Cache;
@@ -53,7 +54,10 @@ public class EhCacheConnectionStorage implements ConnectionsStorage {
     @Override
     public ConnectionContainer getConnection(UUID uuid) {
         final Element element = cache.get(uuid);
-        return element != null ? (ConnectionContainer) element.getObjectValue() : null;
+        if(element == null){
+            throw new ConnectionNotFoundException(uuid.toString());
+        }
+        return (ConnectionContainer) element.getObjectValue();
     }
 
     public void shutdown(){

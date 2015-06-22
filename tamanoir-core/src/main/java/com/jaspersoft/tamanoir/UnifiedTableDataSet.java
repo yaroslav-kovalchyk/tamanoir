@@ -26,7 +26,11 @@ import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 import net.sf.jasperreports.engine.design.JRDesignField;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * <p></p>
@@ -75,7 +79,17 @@ public class UnifiedTableDataSet extends AbstractTableDataSet {
     }
 
     @Override
+    public Collection<Map<String, ?>> getTableData() {
+        Collection<Map<String, ?>> result;
+        if(jrDataSource instanceof JRMapCollectionDataSource){
+            result = ((JRMapCollectionDataSource) jrDataSource).getData();
+        } else {
+            result = super.getTableData();
+        }
+        return result;
+    }
+
     public TableDataSet<UnifiedTableQuery> subset(UnifiedTableQuery query) {
-        return new UnifiedTableSubSet(this, query);
+        return new UnifiedTableSubSet(new UnifiedTableDataSet(new JRMapCollectionDataSource(getTableData()), metadata), query);
     }
 }

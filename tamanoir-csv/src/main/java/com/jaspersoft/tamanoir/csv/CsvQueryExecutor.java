@@ -30,6 +30,7 @@ import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.query.Select;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,9 @@ public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource, TableDat
         for (String columnName : connection.getColumnNames().keySet()) {
             group.addItem(new MetadataElementItem().setName(columnName).setType(String.class.getName()));
         }
-        return  new UnifiedTableDataSet(connection, group).subset(query);
+        final TableDataSet<UnifiedTableQuery> originalDataSet = new UnifiedTableDataSet(connection, group).subset(query);
+        return new UnifiedTableDataSet(new JRMapCollectionDataSource(originalDataSet.getTableData()),
+                (MetadataGroupItem) originalDataSet.getMetadata());
     }
 
     @Override

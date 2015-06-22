@@ -26,6 +26,7 @@ import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,11 @@ import java.util.Map;
 public abstract class AbstractTableDataSet implements TableDataSet<UnifiedTableQuery> {
     @Override
     public Object getData() {
+        return getTableData();
+    }
+
+    @Override
+    public Collection<Map<String, ?>> getTableData() {
         List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
         MetadataGroupItem metadata = (MetadataGroupItem) getMetadata();
         final List<MetadataElementItem> items = (List)metadata.getItems();
@@ -54,6 +60,6 @@ public abstract class AbstractTableDataSet implements TableDataSet<UnifiedTableQ
             }
             data.add(row);
         }
-        return data;
+        return (Collection)data;
     }
 }

@@ -123,7 +123,6 @@ public class UnifiedTableSubSet extends AbstractTableDataSet {
         return metadata;
     }
 
-    @Override
     public TableDataSet<UnifiedTableQuery> subset(UnifiedTableQuery query) {
         return new UnifiedTableSubSet(this, query);
     }
