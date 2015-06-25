@@ -26,7 +26,6 @@ import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -35,18 +34,18 @@ import java.util.Properties;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcConnector implements Connector<Connection>{
+public class JdbcConnector implements Connector<JdbcConnectionContainer> {
     public static final String DRIVER_CLASS_PROPERTY = "driverClass";
 
 
     @Override
-    public Connection openConnection(ConnectionDescriptor descriptor) {
+    public JdbcConnectionContainer openConnection(ConnectionDescriptor descriptor) {
         final Properties properties = new Properties();
         final Connection connection;
         final Map<String, String> descriptorProperties = descriptor.getProperties();
         String driverClassName = descriptorProperties != null && descriptorProperties.get(DRIVER_CLASS_PROPERTY) != null
-                ? descriptorProperties.get(DRIVER_CLASS_PROPERTY) :  "org.postgresql.Driver";
-        if(descriptorProperties != null){
+                ? descriptorProperties.get(DRIVER_CLASS_PROPERTY) : "org.postgresql.Driver";
+        if (descriptorProperties != null) {
             properties.putAll(descriptorProperties);
         }
         try {
@@ -55,22 +54,17 @@ public class JdbcConnector implements Connector<Connection>{
         } catch (Exception e) {
             throw new ConnectionException(e);
         }
-        return connection;
+        return new JdbcConnectionContainer(connection);
     }
 
     @Override
-    public void closeConnection(Connection connection) {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            throw new ConnectionException(e);
-        }
+    public void closeConnection(JdbcConnectionContainer connection) {
+        connection.close();
     }
 
     @Override
     public void testConnection(ConnectionDescriptor connectionDescriptor) {
-        Connection connection = openConnection(connectionDescriptor);
-        closeConnection(connection);
+        closeConnection(openConnection(connectionDescriptor));
     }
 
 

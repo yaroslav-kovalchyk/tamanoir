@@ -24,12 +24,13 @@ import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
+import com.jaspersoft.tamanoir.dto.MetadataElementItem;
 import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
+import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -44,9 +45,9 @@ import java.util.Map;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet> {
+public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer, TableDataSet> {
     @Override
-    public Object executeQuery(Connection connection, String query) {
+    public Object executeQuery(JdbcConnectionContainer connection, String query) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         try {
 
@@ -75,37 +76,44 @@ public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet
         return result;
     }
 
-    protected ResultSet getResultSet(Connection connection, String query, ResultSetCallback callback){
-        Statement stmt = null;
-        ResultSet resultSet = null;
+    protected ResultSet getResultSet(JdbcConnectionContainer connection, String query, ResultSetCallback callback){
+        final ResultSet resultSet;
         try {
-            stmt = connection.createStatement();
+            Statement stmt = connection.getConnection().createStatement();
+            connection.setStatement(stmt);
             resultSet = stmt.executeQuery(query);
+            connection.setResultSet(resultSet);
             if(callback != null){
                 callback.resultSet(resultSet);
             }
         } catch (Exception e ) {
             throw new ConnectionException(e);
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) {
-                    throw new ConnectionException(e);
-                }
-            }
         }
         return resultSet;
 
     }
 
     @Override
-    public TableDataSet prepareDataSet(Connection connection, String query) {
-        final JRResultSetDataSource jrDataSource = new JRResultSetDataSource(getResultSet(connection, query, null));
+    public TableDataSet prepareDataSet(JdbcConnectionContainer connection, String query) {
+        final ResultSet resultSet = getResultSet(connection, query, null);
+        final JRResultSetDataSource jrDataSource = new JRResultSetDataSource(resultSet);
         final TableDataSet<UnifiedTableQuery> originalDataSet = new UnifiedTableDataSet(jrDataSource,
-                (MetadataGroupItem) new JdbcMetadataBuilder().build(connection, null));
+                buildResultSetMetadata(resultSet));
         return new UnifiedTableDataSet(new JRMapCollectionDataSource(originalDataSet.getTableData()),
                 (MetadataGroupItem) originalDataSet.getMetadata());
+    }
+
+    public MetadataGroupItem buildResultSetMetadata(ResultSet resultSet){
+        final List<MetadataItem> result = new ArrayList<MetadataItem>();
+        try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1; i < metaData.getColumnCount() + 1; i++){
+                result.add(new MetadataElementItem().setName(metaData.getColumnName(i)).setType(metaData.getColumnClassName(i)));
+            }
+        } catch (SQLException e) {
+            throw new ConnectionException(e);
+        }
+        return new MetadataGroupItem().setItems(result);
     }
 
     private interface ResultSetCallback{

@@ -27,7 +27,6 @@ import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.MetadataItem;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +45,7 @@ import java.util.Set;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
+public class JdbcMetadataBuilder implements MetadataBuilder<JdbcConnectionContainer> {
     private static final Map<Integer, String> JDBC_TYPES_BY_CODE;
     static {
         Map<Integer, String> map = new HashMap<Integer, String>();
@@ -62,9 +61,9 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
     }
 
     @Override
-    public MetadataItem build(Connection connection, Map<String, String[]> options) {
+    public MetadataItem build(JdbcConnectionContainer connection, Map<String, String[]> options) {
         final MetadataGroupItem result = new MetadataGroupItem().setName("root");
-        final String[] expands = options.get("expand");
+        final String[] expands = options != null ? options.get("expand") : null;
         final Map<String, List<String[]>> expandsMap = new HashMap<String, List<String[]>>();
         if(expands != null){
             for(String expand : expands){
@@ -80,7 +79,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<Connection> {
             }
         }
         try {
-            final DatabaseMetaData metaData = connection.getMetaData();
+            final DatabaseMetaData metaData = connection.getConnection().getMetaData();
             final ResultSet schemas = metaData.getSchemas();
             while (schemas.next()) {
                 String schema = schemas.getString("TABLE_SCHEM");
