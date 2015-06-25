@@ -26,7 +26,6 @@ import com.jaspersoft.tamanoir.dto.MetadataElementItem;
 import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.MetadataItem;
 
-import java.lang.reflect.Field;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,19 +45,30 @@ import java.util.Set;
  * @author Yaroslav.Kovalchyk
  */
 public class JdbcMetadataBuilder implements MetadataBuilder<JdbcConnectionContainer> {
-    private static final Map<Integer, String> JDBC_TYPES_BY_CODE;
-    static {
-        Map<Integer, String> map = new HashMap<Integer, String>();
-        try {
-            Field[] fields = Types.class.getFields();
-            for (Field f : fields) {
-                map.put((Integer)f.get(null), f.getName());
-            }
-        } catch (Exception e) {
-            throw new ConnectionException(e);
-        }
-        JDBC_TYPES_BY_CODE = Collections.unmodifiableMap(map);
-    }
+    private static final Map<Integer, String> JDBC_TYPES_BY_CODE = Collections.unmodifiableMap(new HashMap<Integer, String>(){{
+        put(Types.BIGINT, "java.lang.Long");
+        put(Types.BIT, "java.lang.Boolean");
+        put(Types.BOOLEAN, "java.lang.Boolean");
+        put(Types.CHAR, "java.lang.String");
+        put(Types.DATE, "java.util.Date");
+        put(Types.DECIMAL, "java.math.BigDecimal");
+        put(Types.DOUBLE, "java.lang.Double");
+        put(101, "java.lang.Double");
+        put(Types.FLOAT, "java.lang.Float");
+        put(100, "java.lang.Float");
+        put(Types.INTEGER, "java.lang.Integer");
+        put(Types.LONGVARCHAR, "java.lang.String");
+        put(Types.NUMERIC, "java.math.BigDecimal");
+        put(Types.REAL, "java.math.Double");
+        put(Types.SMALLINT, "java.lang.Short");
+        put(Types.TIME, "java.sql.Time");
+        put(Types.TIMESTAMP, "java.sql.Timestamp");
+        put(-101, "java.sql.Timestamp");
+        put(-102, "java.sql.Timestamp");
+        put(Types.TINYINT, "java.lang.Byte");
+        put(Types.VARCHAR, "java.lang.String");
+        put(Types.NVARCHAR, "java.lang.String");
+    }});
 
     @Override
     public MetadataItem build(JdbcConnectionContainer connection, Map<String, String[]> options) {
