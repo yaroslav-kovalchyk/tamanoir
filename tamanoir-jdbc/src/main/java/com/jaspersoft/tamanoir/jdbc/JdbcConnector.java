@@ -25,9 +25,6 @@ import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * <p></p>
@@ -35,22 +32,12 @@ import java.util.Properties;
  * @author Yaroslav.Kovalchyk
  */
 public class JdbcConnector implements Connector<JdbcConnectionContainer> {
-    public static final String DRIVER_CLASS_PROPERTY = "driverClass";
-
 
     @Override
-    public JdbcConnectionContainer openConnection(ConnectionDescriptor descriptor) {
-        final Properties properties = new Properties();
+    public JdbcConnectionContainer openConnection(ConnectionDescriptor connectionDescriptor) {
         final Connection connection;
-        final Map<String, String> descriptorProperties = descriptor.getProperties();
-        String driverClassName = descriptorProperties != null && descriptorProperties.get(DRIVER_CLASS_PROPERTY) != null
-                ? descriptorProperties.get(DRIVER_CLASS_PROPERTY) : "org.postgresql.Driver";
-        if (descriptorProperties != null) {
-            properties.putAll(descriptorProperties);
-        }
         try {
-            Class.forName(driverClassName);
-            connection = DriverManager.getConnection(descriptor.getUrl(), properties);
+            connection = JdbcDataSource.getInstance(connectionDescriptor).getConnection();
         } catch (Exception e) {
             throw new ConnectionException(e);
         }
