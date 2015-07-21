@@ -66,7 +66,15 @@ public class JdbcConnectionContainer {
     public void close(){
         if(resultSet != null) try {
             resultSet.close();
-            if(statement != null) statement.close();
+        } catch (SQLException e) {
+            throw new ConnectionException(e);
+        }
+        if(statement != null) try {
+            statement.close();
+        } catch (SQLException e) {
+            throw new ConnectionException(e);
+        }
+        if(connection != null) try {
             connection.close();
         } catch (SQLException e) {
             throw new ConnectionException(e);

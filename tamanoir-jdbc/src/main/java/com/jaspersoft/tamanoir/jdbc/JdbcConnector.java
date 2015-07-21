@@ -48,11 +48,7 @@ public class JdbcConnector implements Connector<JdbcConnectionContainer> {
 
     @Override
     public void closeConnection(JdbcConnectionContainer connection) {
-        try {
-            connection.getConnection().close();
-        } catch(SQLException e) {
-            throw new ConnectionException(e);
-        }
+        connection.close();
     }
 
     @Override
