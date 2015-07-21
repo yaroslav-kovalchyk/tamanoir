@@ -25,6 +25,7 @@ import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * <p></p>
@@ -32,12 +33,13 @@ import java.sql.Connection;
  * @author Yaroslav.Kovalchyk
  */
 public class JdbcConnector implements Connector<JdbcConnectionContainer> {
+    private JdbcDataSource jdbcDataSource = new JdbcDataSource();
 
     @Override
     public JdbcConnectionContainer openConnection(ConnectionDescriptor connectionDescriptor) {
         final Connection connection;
         try {
-            connection = JdbcDataSource.getInstance(connectionDescriptor).getConnection();
+            connection = jdbcDataSource.getInstance(connectionDescriptor).getConnection();
         } catch (Exception e) {
             throw new ConnectionException(e);
         }
@@ -46,7 +48,11 @@ public class JdbcConnector implements Connector<JdbcConnectionContainer> {
 
     @Override
     public void closeConnection(JdbcConnectionContainer connection) {
-        connection.close();
+        try {
+            connection.getConnection().close();
+        } catch(SQLException e) {
+            throw new ConnectionException(e);
+        }
     }
 
     @Override

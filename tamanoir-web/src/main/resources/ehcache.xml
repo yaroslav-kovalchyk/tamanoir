@@ -15,4 +15,11 @@
                 timeToLiveSeconds="0"
                 diskPersistent="true"/>
 
+        <cache name="connectionDescriptors"
+               maxElementsInMemory="10000"
+               eternal="false"
+               overflowToDisk="true"
+               timeToIdleSeconds="180"
+               timeToLiveSeconds="0"
+               diskPersistent="true"/>
 </ehcache>
