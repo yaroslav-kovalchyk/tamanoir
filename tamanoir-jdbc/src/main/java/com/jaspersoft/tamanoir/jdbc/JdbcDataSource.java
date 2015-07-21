@@ -47,8 +47,6 @@ public class JdbcDataSource {
         overrideProps.put("maxPoolSize", MAX_POOL_SIZE);
         overrideProps.put("minPoolSize", MIN_POOL_SIZE);
         overrideProps.put("autoCommitOnClose", true);
-        overrideProps.put("debugUnreturnedConnectionStackTraces", true);
-        overrideProps.put("unreturnedConnectionTimeout", 30);
 
         final Properties properties = new Properties();
         final Map<String, String> descriptorProperties = descriptor.getProperties();
