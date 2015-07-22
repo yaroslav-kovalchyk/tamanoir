@@ -33,10 +33,11 @@ public class JdbcDataSource {
 
     public DataSource getInstance(ConnectionDescriptor descriptor) {
         DataSource ds_pooled;
+        ConnectionDescriptor currentDescriptor = new ConnectionDescriptor(descriptor);
 
         //First checking cache
         Element element;
-        if ((element = cache.get(descriptor)) != null) {
+        if ((element = cache.get(currentDescriptor)) != null) {
             return (DataSource)element.getValue();
         }
 
@@ -49,20 +50,20 @@ public class JdbcDataSource {
         overrideProps.put("autoCommitOnClose", true);
 
         final Properties properties = new Properties();
-        final Map<String, String> descriptorProperties = descriptor.getProperties();
+        final Map<String, String> descriptorProperties = currentDescriptor.getProperties();
 
         if (descriptorProperties != null) {
             properties.putAll(descriptorProperties);
         }
         try {
-            ds_unpooled = DataSources.unpooledDataSource(descriptor.getUrl(), descriptorProperties.get("user"),
+            ds_unpooled = DataSources.unpooledDataSource(currentDescriptor.getUrl(), descriptorProperties.get("user"),
                     descriptorProperties.get("password"));
             ds_pooled = DataSources.pooledDataSource(ds_unpooled, overrideProps);
         } catch (SQLException e) {
             throw new ConnectionException(e);
         }
 
-        cache.put(new Element(descriptor, ds_pooled));
+        cache.put(new Element(currentDescriptor, ds_pooled));
         return ds_pooled;
     }
 
