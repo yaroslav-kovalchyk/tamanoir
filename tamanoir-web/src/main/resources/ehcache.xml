@@ -3,23 +3,32 @@
 <ehcache
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="ehcache.xsd"
-        name="tamanoirCache" updateCheck="false">
+        name="tamanoirCacheWeb" updateCheck="false">
 
     <diskStore path="java.io.tmpdir"/>
 
-        <cache name="connections"
-                maxElementsInMemory="10000"
-                eternal="false"
-                overflowToDisk="true"
-                timeToIdleSeconds="0"
-                timeToLiveSeconds="0"
-                diskPersistent="true"/>
+    <cache name="connections"
+            maxElementsInMemory="10000"
+            eternal="false"
+            overflowToDisk="true"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="0"
+            diskPersistent="true"/>
 
-        <cache name="connectionDescriptors"
-               maxElementsInMemory="10000"
-               eternal="false"
-               overflowToDisk="true"
-               timeToIdleSeconds="1800"
-               timeToLiveSeconds="0"
-               diskPersistent="true"/>
+    <cache name="connectionDescriptors"
+           maxElementsInMemory="10000"
+           eternal="false"
+           overflowToDisk="true"
+           timeToIdleSeconds="1800"
+           timeToLiveSeconds="0"
+           diskPersistent="true"/>
+
+    <cache name="metadata"
+           maxElementsInMemory="10000"
+           eternal="false"
+           overflowToDisk="true"
+           timeToIdleSeconds="1800"
+           timeToLiveSeconds="0"
+           diskPersistent="true"/>
+
 </ehcache>

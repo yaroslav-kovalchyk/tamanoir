@@ -74,9 +74,20 @@ public class JdbcMetadataBuilder implements MetadataBuilder<JdbcConnectionContai
     public MetadataItem build(JdbcConnectionContainer connection, Map<String, String[]> options) {
         final String[] expands = options != null ? options.get("expand") : null;
         final String[] includes = options != null ? options.get("include") : null;
+        final String[] recursives = new String[]{"public"};//options != null ? options.get("recursive") : null;
         List<MetadataItem> items;
         try {
             final DatabaseMetaData metaData = connection.getConnection().getMetaData();
+            if(recursives != null && recursives.length > 0) {
+                final Map<String, List<String[]>> recursiveMap = new HashMap<String, List<String[]>>();
+                for (String recursive : recursives) {
+                    if (recursive != null) {
+                        final String[] path = recursive.split("\\.");
+                        recursiveMap.put(path[0], null);
+                    }
+                }
+                items = expandMetadata(recursiveMap, metaData);
+            }
             if (includes != null && includes.length > 0) {
                 items = includeMetadata(includes, metaData);
             } else {
@@ -108,7 +119,11 @@ public class JdbcMetadataBuilder implements MetadataBuilder<JdbcConnectionContai
         final ResultSet schemas = metaData.getSchemas();
         while (schemas.next()) {
             String schema = schemas.getString("TABLE_SCHEM");
-            result.add(getSchemaMetadata(schema, expandsMap.get(schema), metaData));
+            if(expandsMap != null) {
+                result.add(getSchemaMetadata(schema, expandsMap.get(schema), metaData));
+            } else {
+                result.add(getSchemaMetadata(schema, null, metaData));
+            }
         }
         return result;
 
@@ -133,23 +148,29 @@ public class JdbcMetadataBuilder implements MetadataBuilder<JdbcConnectionContai
     }
 
     protected MetadataItem getSchemaMetadata(String schema, List<String[]> expand, DatabaseMetaData metaData) {
-        final List<MetadataItem> tableItems = expand != null ? new ArrayList<MetadataItem>() : null;
-        if (tableItems != null) {
-            final Set<String> tableNamesToExpand = new HashSet<String>();
+        List<MetadataItem> tableItems = new ArrayList<MetadataItem>();
+        final Set<String> tableNamesToExpand = new HashSet<String>();
+        if (expand != null) {
             for (String[] strings : expand) {
                 tableNamesToExpand.add(strings[0]);
             }
-            try {
-                final ResultSet tables = metaData.getTables(null, schema, null, new String[]{"TABLE", "VIEW", "ALIAS", "SYNONYM"});
-                while (tables.next()) {
-                    final String tableName = tables.getString("TABLE_NAME");
-                    tableItems.add(getTableMetadata(schema, tableName, tableNamesToExpand.contains(tableName), metaData));
-                }
-            } catch (SQLException e) {
-                throw new ConnectionException(e);
-            }
         }
-        return new MetadataGroupItem().setName(schema).setItems(tableItems);
+        try {
+            final ResultSet tables = metaData.getTables(null, schema, null, new String[]{"TABLE", "VIEW", "ALIAS", "SYNONYM"});
+            while (tables.next()) {
+                final String tableName = tables.getString("TABLE_NAME");
+                tableItems.add(getTableMetadata(schema, tableName, (tableNamesToExpand.size() == 0 || tableNamesToExpand.contains(tableName)), metaData));
+            }
+        } catch (SQLException e) {
+            throw new ConnectionException(e);
+        }
+        MetadataGroupItem result = new MetadataGroupItem().setName(schema);
+        if(tableItems.size() > 0) {
+            result = result.setItems(tableItems);
+        } else {
+            result = result.setItems(null);
+        }
+        return result;
     }
 
     protected MetadataItem getTableMetadata(String schema, String table, boolean expand, DatabaseMetaData metaData) {

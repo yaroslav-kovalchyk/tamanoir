@@ -39,6 +39,7 @@ import java.util.Map;
  */
 public class ConnectionsManager {
     private static Map<String, ConnectionProcessorFactory> factories = new HashMap<String, ConnectionProcessorFactory>();
+    private static EhCacheProcessorStorage ehCacheProcessorStorage = new EhCacheProcessorStorage();
 
     public static void registerConnection(String connectionType, ConnectionProcessorFactory factory) {
         factories.put(connectionType, factory);
@@ -83,7 +84,8 @@ public class ConnectionsManager {
                     .setMessage("Processor type '" + processorClass.getName() + "' is not supported")
                     .setParameters(processorClass.getName()));
         }
-        return connectionProcessorFactory.getProcessor(processorClass);
+
+        return ehCacheProcessorStorage.getInstance(connectionProcessorFactory, processorClass);
     }
 
 
