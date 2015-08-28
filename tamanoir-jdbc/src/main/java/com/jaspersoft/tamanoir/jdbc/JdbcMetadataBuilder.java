@@ -74,7 +74,7 @@ public class JdbcMetadataBuilder implements MetadataBuilder<JdbcConnectionContai
     public MetadataItem build(JdbcConnectionContainer connection, Map<String, String[]> options) {
         final String[] expands = options != null ? options.get("expand") : null;
         final String[] includes = options != null ? options.get("include") : null;
-        final String[] recursives = new String[]{"public"};//options != null ? options.get("recursive") : null;
+        final String[] recursives = options != null ? options.get("recursive") : null;
         List<MetadataItem> items;
         try {
             final DatabaseMetaData metaData = connection.getConnection().getMetaData();
