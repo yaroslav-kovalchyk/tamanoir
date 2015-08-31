@@ -3,7 +3,7 @@
 <ehcache
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="ehcache.xsd"
-        name="tamanoirCacheWeb" updateCheck="false">
+        name="tamanoirCache" updateCheck="false">
 
     <diskStore path="java.io.tmpdir"/>
 
