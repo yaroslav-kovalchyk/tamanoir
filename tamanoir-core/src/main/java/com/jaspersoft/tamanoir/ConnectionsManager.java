@@ -83,7 +83,6 @@ public class ConnectionsManager {
                     .setMessage("Processor type '" + processorClass.getName() + "' is not supported")
                     .setParameters(processorClass.getName()));
         }
-
         return connectionProcessorFactory.getProcessor(processorClass);
     }
 
