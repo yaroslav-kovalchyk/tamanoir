@@ -20,13 +20,13 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
+import com.jaspersoft.datadiscovery.dto.MetadataElementItem;
+import com.jaspersoft.datadiscovery.dto.MetadataGroupItem;
+import com.jaspersoft.datadiscovery.dto.MetadataItem;
 import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
-import com.jaspersoft.tamanoir.dto.MetadataElementItem;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;

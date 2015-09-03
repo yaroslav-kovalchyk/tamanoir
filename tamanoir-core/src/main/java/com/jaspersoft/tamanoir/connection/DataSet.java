@@ -20,7 +20,7 @@
 */
 package com.jaspersoft.tamanoir.connection;
 
-import com.jaspersoft.tamanoir.dto.MetadataItem;
+import com.jaspersoft.datadiscovery.dto.MetadataItem;
 
 /**
  * <p></p>

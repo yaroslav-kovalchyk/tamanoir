@@ -20,11 +20,11 @@
 */
 package com.jaspersoft.tamanoir;
 
+import com.jaspersoft.datadiscovery.dto.MetadataElementItem;
+import com.jaspersoft.datadiscovery.dto.MetadataGroupItem;
+import com.jaspersoft.datadiscovery.dto.MetadataItem;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
-import com.jaspersoft.tamanoir.dto.MetadataElementItem;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.MatchingRule;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 

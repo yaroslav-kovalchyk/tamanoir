@@ -20,9 +20,9 @@
 */
 package com.jaspersoft.tamanoir;
 
+import com.jaspersoft.datadiscovery.dto.MetadataGroupItem;
+import com.jaspersoft.datadiscovery.dto.MetadataItem;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;

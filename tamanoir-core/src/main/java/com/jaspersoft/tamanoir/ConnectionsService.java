@@ -20,10 +20,10 @@
 */
 package com.jaspersoft.tamanoir;
 
+import com.jaspersoft.datadiscovery.dto.MetadataItem;
 import com.jaspersoft.tamanoir.connection.DataSet;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionContainer;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionsStorage;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 

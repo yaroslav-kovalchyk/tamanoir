@@ -20,9 +20,10 @@
 */
 package com.jaspersoft.tamanoir.csv;
 
+import com.jaspersoft.datadiscovery.MetadataBuilder;
+import com.jaspersoft.datadiscovery.csv.CsvMetadataBuilder;
 import com.jaspersoft.tamanoir.connection.ConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.connection.Connector;
-import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 
 /**

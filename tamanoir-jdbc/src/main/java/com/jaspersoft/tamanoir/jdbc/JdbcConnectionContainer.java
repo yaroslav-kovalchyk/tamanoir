@@ -20,7 +20,7 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
-import com.jaspersoft.tamanoir.ConnectionException;
+import com.jaspersoft.datadiscovery.exception.DataDiscoveryException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -67,17 +67,17 @@ public class JdbcConnectionContainer {
         if(resultSet != null) try {
             resultSet.close();
         } catch (SQLException e) {
-            throw new ConnectionException(e);
+            throw new DataDiscoveryException(e);
         }
         if(statement != null) try {
             statement.close();
         } catch (SQLException e) {
-            throw new ConnectionException(e);
+            throw new DataDiscoveryException(e);
         }
         if(connection != null) try {
             connection.close();
         } catch (SQLException e) {
-            throw new ConnectionException(e);
+            throw new DataDiscoveryException(e);
         }
     }
 }

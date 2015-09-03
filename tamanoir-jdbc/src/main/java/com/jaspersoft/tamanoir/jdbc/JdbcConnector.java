@@ -32,23 +32,27 @@ import java.sql.SQLException;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcConnector implements Connector<JdbcConnectionContainer> {
+public class JdbcConnector implements Connector<Connection> {
     private JdbcDataSource jdbcDataSource = new JdbcDataSource();
 
     @Override
-    public JdbcConnectionContainer openConnection(ConnectionDescriptor connectionDescriptor) {
+    public Connection openConnection(ConnectionDescriptor connectionDescriptor) {
         final Connection connection;
         try {
             connection = jdbcDataSource.getInstance(connectionDescriptor).getConnection();
         } catch (Exception e) {
             throw new ConnectionException(e);
         }
-        return new JdbcConnectionContainer(connection);
+        return connection;
     }
 
     @Override
-    public void closeConnection(JdbcConnectionContainer connection) {
-        connection.close();
+    public void closeConnection(Connection connection) {
+        try {
+            connection.close();
+        } catch(SQLException e) {
+            throw new ConnectionException(e);
+        }
     }
 
     @Override
