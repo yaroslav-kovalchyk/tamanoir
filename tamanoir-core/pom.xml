@@ -11,8 +11,8 @@
     <artifactId>tamanoir-core</artifactId>
     <dependencies>
         <dependency>
-            <groupId>com.jaspersoft.data-discovery</groupId>
-            <artifactId>data-discovery-core</artifactId>
+            <groupId>com.jaspersoft.datadiscovery</groupId>
+            <artifactId>datadiscovery-core</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
