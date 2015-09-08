@@ -21,7 +21,6 @@
 package com.jaspersoft.tamanoir.csv;
 
 import com.jaspersoft.datadiscovery.dto.ResourceMetadataSingleElement;
-import com.jaspersoft.datadiscovery.dto.ResourceSingleElement;
 import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
 import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.ConnectionException;
