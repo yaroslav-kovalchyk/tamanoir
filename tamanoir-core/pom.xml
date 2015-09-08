@@ -9,6 +9,20 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>tamanoir-core</artifactId>
+
+    <repositories>
+        <repository>
+            <id>github.maven.repo</id>
+            <name>Github Repository for Maven</name>
+            <url>https://github.com/sergiyblazhievsky/data-discovery/tree/mvn-repo</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.jaspersoft.datadiscovery</groupId>

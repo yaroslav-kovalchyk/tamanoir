@@ -20,9 +20,9 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
-import com.jaspersoft.datadiscovery.dto.MetadataElementItem;
-import com.jaspersoft.datadiscovery.dto.MetadataGroupItem;
-import com.jaspersoft.datadiscovery.dto.MetadataItem;
+import com.jaspersoft.datadiscovery.dto.ResourceMetadataSingleElement;
+import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
@@ -100,20 +100,20 @@ public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer,
         final TableDataSet<UnifiedTableQuery> originalDataSet = new UnifiedTableDataSet(jrDataSource,
                 buildResultSetMetadata(resultSet));
         return new UnifiedTableDataSet(new JRMapCollectionDataSource(originalDataSet.getTableData()),
-                (MetadataGroupItem) originalDataSet.getMetadata());
+                (ResourceGroupElement) originalDataSet.getMetadata());
     }
 
-    public MetadataGroupItem buildResultSetMetadata(ResultSet resultSet){
-        final List<MetadataItem> result = new ArrayList<MetadataItem>();
+    public ResourceGroupElement buildResultSetMetadata(ResultSet resultSet){
+        final List<SchemaElement> result = new ArrayList<SchemaElement>();
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
             for (int i = 1; i < metaData.getColumnCount() + 1; i++){
-                result.add(new MetadataElementItem().setName(metaData.getColumnName(i)).setType(metaData.getColumnClassName(i)));
+                result.add(new ResourceMetadataSingleElement().setName(metaData.getColumnName(i)).setType(metaData.getColumnClassName(i)));
             }
         } catch (SQLException e) {
             throw new ConnectionException(e);
         }
-        return new MetadataGroupItem().setItems(result);
+        return new ResourceGroupElement().setElements(result);
     }
 
     private interface ResultSetCallback{

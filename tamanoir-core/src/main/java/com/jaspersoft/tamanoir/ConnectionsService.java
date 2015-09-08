@@ -20,7 +20,7 @@
 */
 package com.jaspersoft.tamanoir;
 
-import com.jaspersoft.datadiscovery.dto.MetadataItem;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.connection.DataSet;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionContainer;
 import com.jaspersoft.tamanoir.connection.storage.ConnectionsStorage;
@@ -68,7 +68,7 @@ public class ConnectionsService {
         return storage.getConnection(uuid).getConnectionDescriptor();
     }
 
-    public MetadataItem getDataSetMetadata(UUID uuid){
+    public SchemaElement getDataSetMetadata(UUID uuid){
         return getDataSet(uuid).getMetadata();
     }
 

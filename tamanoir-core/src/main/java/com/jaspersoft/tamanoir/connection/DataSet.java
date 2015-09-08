@@ -20,7 +20,7 @@
 */
 package com.jaspersoft.tamanoir.connection;
 
-import com.jaspersoft.datadiscovery.dto.MetadataItem;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 
 /**
  * <p></p>
@@ -28,7 +28,7 @@ import com.jaspersoft.datadiscovery.dto.MetadataItem;
  * @author Yaroslav.Kovalchyk
  */
 public interface DataSet<Q,D extends DataSet<Q,D>> {
-    MetadataItem getMetadata();
+    SchemaElement getMetadata();
     Object getData();
     D subset(Q query);
 }
