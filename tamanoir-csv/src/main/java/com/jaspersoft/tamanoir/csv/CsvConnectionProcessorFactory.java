@@ -20,8 +20,8 @@
 */
 package com.jaspersoft.tamanoir.csv;
 
-import com.jaspersoft.datadiscovery.MetadataBuilder;
-import com.jaspersoft.datadiscovery.csv.CsvMetadataBuilder;
+import com.jaspersoft.datadiscovery.MetadataProvider;
+import com.jaspersoft.datadiscovery.csv.CsvMetadataProvider;
 import com.jaspersoft.tamanoir.connection.ConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
@@ -37,8 +37,8 @@ public class CsvConnectionProcessorFactory implements ConnectionProcessorFactory
         T processor = null;
         if(Connector.class == processorClass){
             processor = (T) new CsvConnector();
-        } else if (MetadataBuilder.class == processorClass){
-            processor = (T) new CsvMetadataBuilder();
+        } else if (MetadataProvider.class == processorClass){
+            processor = (T) new CsvMetadataProvider();
         }else if (QueryExecutor.class == processorClass){
             processor = (T) new CsvQueryExecutor();
         }
