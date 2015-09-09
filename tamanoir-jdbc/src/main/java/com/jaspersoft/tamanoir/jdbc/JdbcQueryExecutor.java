@@ -31,6 +31,7 @@ import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -45,9 +46,9 @@ import java.util.Map;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer, TableDataSet> {
+public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet> {
     @Override
-    public Object executeQuery(JdbcConnectionContainer connection, String query) {
+    public Object executeQuery(Connection connection, String query) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         try {
 
@@ -76,13 +77,11 @@ public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer,
         return result;
     }
 
-    protected ResultSet getResultSet(JdbcConnectionContainer connection, String query, ResultSetCallback callback){
+    protected ResultSet getResultSet(Connection connection, String query, ResultSetCallback callback){
         final ResultSet resultSet;
         try {
-            Statement stmt = connection.getConnection().createStatement();
-            connection.setStatement(stmt);
+            Statement stmt = connection.createStatement();
             resultSet = stmt.executeQuery(query);
-            connection.setResultSet(resultSet);
             if(callback != null){
                 callback.resultSet(resultSet);
             }
@@ -94,7 +93,7 @@ public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer,
     }
 
     @Override
-    public TableDataSet prepareDataSet(JdbcConnectionContainer connection, String query) {
+    public TableDataSet prepareDataSet(Connection connection, String query) {
         final ResultSet resultSet = getResultSet(connection, query, null);
         final JRResultSetDataSource jrDataSource = new JRResultSetDataSource(resultSet);
         final TableDataSet<UnifiedTableQuery> originalDataSet = new UnifiedTableDataSet(jrDataSource,

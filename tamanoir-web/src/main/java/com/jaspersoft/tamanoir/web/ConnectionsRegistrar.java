@@ -43,9 +43,6 @@ import javax.servlet.ServletContextListener;
 public class ConnectionsRegistrar implements ServletContextListener {
     private final static Log log = LogFactory.getLog(ConnectionsRegistrar.class);
 
-    @Autowired
-    ServletContext context;
-
     private EhCacheConnectionStorage storage;
     private SessionFactory sessionFactory;
 
@@ -59,8 +56,8 @@ public class ConnectionsRegistrar implements ServletContextListener {
         }catch (Exception e){
             log.error("Unexpected error occur", e);
         }
-        context.setAttribute(ConnectionsService.class.getName(), new ConnectionsService(storage));
-        context.setAttribute(DomainsService.class.getName(), new DomainsService(sessionFactory));
+        sce.getServletContext().setAttribute(ConnectionsService.class.getName(), new ConnectionsService(storage));
+        sce.getServletContext().setAttribute(DomainsService.class.getName(), new DomainsService(sessionFactory));
     }
 
     @Override
