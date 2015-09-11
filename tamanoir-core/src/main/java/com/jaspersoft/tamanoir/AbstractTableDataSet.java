@@ -21,8 +21,8 @@
 package com.jaspersoft.tamanoir;
 
 import com.jaspersoft.tamanoir.connection.TableDataSet;
-import com.jaspersoft.tamanoir.dto.MetadataElementItem;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
+import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
+import com.jaspersoft.datadiscovery.dto.ResourceSingleElement;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 
 import java.util.ArrayList;
@@ -45,11 +45,11 @@ public abstract class AbstractTableDataSet implements TableDataSet<UnifiedTableQ
     @Override
     public Collection<Map<String, ?>> getTableData() {
         List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-        MetadataGroupItem metadata = (MetadataGroupItem) getMetadata();
-        final List<MetadataElementItem> items = (List)metadata.getItems();
+        ResourceGroupElement metadata = (ResourceGroupElement) getMetadata();
+        final List<ResourceSingleElement> items = (List)metadata.getElements();
         while (next()) {
             Map<String, Object> row = new HashMap<String, Object>(items.size());
-            for (MetadataElementItem item : items) {
+            for (ResourceSingleElement item : items) {
                 try {
                     final String name = item.getName();
                     final Object value = getValue(name, Class.forName(item.getType()));

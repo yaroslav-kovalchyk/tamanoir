@@ -20,9 +20,9 @@
 */
 package com.jaspersoft.tamanoir;
 
+import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -39,8 +39,8 @@ import java.util.Map;
  */
 public class UnifiedTableDataSet extends AbstractTableDataSet {
     private final JRDataSource jrDataSource;
-    private final MetadataGroupItem metadata;
-    public UnifiedTableDataSet(JRDataSource jrDataSource, MetadataGroupItem metadata){
+    private final ResourceGroupElement metadata;
+    public UnifiedTableDataSet(JRDataSource jrDataSource, ResourceGroupElement metadata){
         this.jrDataSource = jrDataSource;
         this.metadata = metadata;
     }
@@ -74,7 +74,7 @@ public class UnifiedTableDataSet extends AbstractTableDataSet {
     }
 
     @Override
-    public MetadataItem getMetadata() {
+    public SchemaElement getMetadata() {
         return metadata;
     }
 

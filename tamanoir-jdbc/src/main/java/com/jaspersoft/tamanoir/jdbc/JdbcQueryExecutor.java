@@ -20,17 +20,18 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
+import com.jaspersoft.datadiscovery.dto.ResourceMetadataSingleElement;
+import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
-import com.jaspersoft.tamanoir.dto.MetadataElementItem;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -45,9 +46,9 @@ import java.util.Map;
  *
  * @author Yaroslav.Kovalchyk
  */
-public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer, TableDataSet> {
+public class JdbcQueryExecutor implements QueryExecutor<Connection, TableDataSet> {
     @Override
-    public Object executeQuery(JdbcConnectionContainer connection, String query) {
+    public Object executeQuery(Connection connection, String query) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         try {
 
@@ -76,13 +77,11 @@ public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer,
         return result;
     }
 
-    protected ResultSet getResultSet(JdbcConnectionContainer connection, String query, ResultSetCallback callback){
+    protected ResultSet getResultSet(Connection connection, String query, ResultSetCallback callback){
         final ResultSet resultSet;
         try {
-            Statement stmt = connection.getConnection().createStatement();
-            connection.setStatement(stmt);
+            Statement stmt = connection.createStatement();
             resultSet = stmt.executeQuery(query);
-            connection.setResultSet(resultSet);
             if(callback != null){
                 callback.resultSet(resultSet);
             }
@@ -94,26 +93,26 @@ public class JdbcQueryExecutor implements QueryExecutor<JdbcConnectionContainer,
     }
 
     @Override
-    public TableDataSet prepareDataSet(JdbcConnectionContainer connection, String query) {
+    public TableDataSet prepareDataSet(Connection connection, String query) {
         final ResultSet resultSet = getResultSet(connection, query, null);
         final JRResultSetDataSource jrDataSource = new JRResultSetDataSource(resultSet);
         final TableDataSet<UnifiedTableQuery> originalDataSet = new UnifiedTableDataSet(jrDataSource,
                 buildResultSetMetadata(resultSet));
         return new UnifiedTableDataSet(new JRMapCollectionDataSource(originalDataSet.getTableData()),
-                (MetadataGroupItem) originalDataSet.getMetadata());
+                (ResourceGroupElement) originalDataSet.getMetadata());
     }
 
-    public MetadataGroupItem buildResultSetMetadata(ResultSet resultSet){
-        final List<MetadataItem> result = new ArrayList<MetadataItem>();
+    public ResourceGroupElement buildResultSetMetadata(ResultSet resultSet){
+        final List<SchemaElement> result = new ArrayList<SchemaElement>();
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
             for (int i = 1; i < metaData.getColumnCount() + 1; i++){
-                result.add(new MetadataElementItem().setName(metaData.getColumnName(i)).setType(metaData.getColumnClassName(i)));
+                result.add(new ResourceMetadataSingleElement().setName(metaData.getColumnName(i)).setType(metaData.getColumnClassName(i)));
             }
         } catch (SQLException e) {
             throw new ConnectionException(e);
         }
-        return new MetadataGroupItem().setItems(result);
+        return new ResourceGroupElement().setElements(result);
     }
 
     private interface ResultSetCallback{

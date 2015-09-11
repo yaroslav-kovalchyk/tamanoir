@@ -20,13 +20,14 @@
 */
 package com.jaspersoft.tamanoir.csv;
 
+import com.jaspersoft.datadiscovery.dto.ResourceMetadataSingleElement;
+import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.UnifiedTableDataSet;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
-import com.jaspersoft.tamanoir.dto.MetadataElementItem;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
 import com.jaspersoft.tamanoir.dto.query.Select;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
@@ -83,13 +84,15 @@ public class CsvQueryExecutor implements QueryExecutor<JRCsvDataSource, TableDat
     }
 
     protected TableDataSet<UnifiedTableQuery> prepareDataSet(JRCsvDataSource connection, UnifiedTableQuery query){
-        MetadataGroupItem group = new MetadataGroupItem().setName("root");
+        List<SchemaElement> resultList = new ArrayList<SchemaElement>();
+        ResourceGroupElement group = (ResourceGroupElement)new ResourceGroupElement().setName("root");
         for (String columnName : connection.getColumnNames().keySet()) {
-            group.addItem(new MetadataElementItem().setName(columnName).setType(String.class.getName()));
+            resultList.add(new ResourceMetadataSingleElement().setName(columnName).setType(String.class.getName()));
         }
+        group.setElements(resultList);
         final TableDataSet<UnifiedTableQuery> originalDataSet = new UnifiedTableDataSet(connection, group).subset(query);
         return new UnifiedTableDataSet(new JRMapCollectionDataSource(originalDataSet.getTableData()),
-                (MetadataGroupItem) originalDataSet.getMetadata());
+                (ResourceGroupElement) originalDataSet.getMetadata());
     }
 
     @Override

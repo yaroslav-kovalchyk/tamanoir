@@ -20,9 +20,10 @@
 */
 package com.jaspersoft.tamanoir.jdbc;
 
+import com.jaspersoft.datadiscovery.MetadataProvider;
+import com.jaspersoft.datadiscovery.jdbc.JdbcMetadataProvider;
 import com.jaspersoft.tamanoir.connection.ConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.connection.Connector;
-import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 
 /**
@@ -36,8 +37,8 @@ public class JdbcConnectionProcessorFactory implements ConnectionProcessorFactor
         T processor =  null;
         if(Connector.class == processorClass){
             processor = (T) new JdbcConnector();
-        } else if (MetadataBuilder.class == processorClass){
-            processor = (T) new JdbcMetadataBuilder();
+        } else if (MetadataProvider.class == processorClass){
+            processor = (T) new JdbcMetadataProvider();
         }else if (QueryExecutor.class == processorClass){
             processor = (T) new JdbcQueryExecutor();
         }

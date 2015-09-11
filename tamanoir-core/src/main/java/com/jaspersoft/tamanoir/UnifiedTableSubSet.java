@@ -20,11 +20,11 @@
 */
 package com.jaspersoft.tamanoir;
 
+import com.jaspersoft.datadiscovery.dto.ResourceSingleElement;
+import com.jaspersoft.datadiscovery.dto.ResourceGroupElement;
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.connection.TableDataSet;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
-import com.jaspersoft.tamanoir.dto.MetadataElementItem;
-import com.jaspersoft.tamanoir.dto.MetadataGroupItem;
-import com.jaspersoft.tamanoir.dto.MetadataItem;
 import com.jaspersoft.tamanoir.dto.query.MatchingRule;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
 
@@ -108,13 +108,13 @@ public class UnifiedTableSubSet extends AbstractTableDataSet {
     }
 
     @Override
-    public MetadataItem getMetadata() {
-        final MetadataGroupItem metadata = new MetadataGroupItem ((MetadataGroupItem) parent.getMetadata());
-        final List<MetadataElementItem> columnsMetadata = (List)metadata.getItems();
-        final Iterator<MetadataElementItem> iterator = columnsMetadata.iterator();
+    public SchemaElement getMetadata() {
+        final ResourceGroupElement metadata = new ResourceGroupElement ((ResourceGroupElement) parent.getMetadata());
+        final List<ResourceSingleElement> columnsMetadata = (List)metadata.getElements();
+        final Iterator<ResourceSingleElement> iterator = columnsMetadata.iterator();
         if(columns != null && !columns.isEmpty()) {
             for (; iterator.hasNext(); ) {
-                final MetadataElementItem column = iterator.next();
+                final ResourceSingleElement column = iterator.next();
                 if (!columns.contains(column.getName())) {
                     iterator.remove();
                 }

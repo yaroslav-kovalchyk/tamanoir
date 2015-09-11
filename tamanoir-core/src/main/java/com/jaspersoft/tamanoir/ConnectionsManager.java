@@ -20,10 +20,10 @@
 */
 package com.jaspersoft.tamanoir;
 
+import com.jaspersoft.datadiscovery.MetadataProvider;
 import com.jaspersoft.tamanoir.connection.ConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.connection.Connector;
 import com.jaspersoft.tamanoir.connection.DataSet;
-import com.jaspersoft.tamanoir.connection.MetadataBuilder;
 import com.jaspersoft.tamanoir.connection.QueryExecutor;
 import com.jaspersoft.tamanoir.dto.ConnectionDescriptor;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
@@ -52,7 +52,7 @@ public class ConnectionsManager {
         return operateConnection(connectionDescriptor, new ConnectionOperator<Object>() {
             @Override
             public Object operate(Object connection) {
-                return getProcessor(connectionDescriptor, MetadataBuilder.class).build(connection, options);
+                return getProcessor(connectionDescriptor, MetadataProvider.class).build(connection, options);
             }
         });
     }
