@@ -29,9 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.jaspersoft.tamanoir.domain.DomainsService;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -46,7 +44,6 @@ public class ConnectionsRegistrar implements ServletContextListener {
     private EhCacheConnectionStorage storage;
     private SessionFactory sessionFactory;
 
-    @Override
     public void contextInitialized(ServletContextEvent sce) {
         ConnectionsManager.registerConnection("csv", new CsvConnectionProcessorFactory());
         ConnectionsManager.registerConnection("jdbc", new JdbcConnectionProcessorFactory());
@@ -60,7 +57,6 @@ public class ConnectionsRegistrar implements ServletContextListener {
         sce.getServletContext().setAttribute(DomainsService.class.getName(), new DomainsService(sessionFactory));
     }
 
-    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         storage.shutdown();
         sessionFactory.close();
