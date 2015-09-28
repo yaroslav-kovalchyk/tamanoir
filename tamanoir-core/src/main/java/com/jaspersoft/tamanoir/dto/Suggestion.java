@@ -3,7 +3,7 @@ package com.jaspersoft.tamanoir.dto;
 /**
  * Created by serhii.blazhyievskyi on 9/22/2015.
  */
-public class Suggestion implements Comparable {
+public class Suggestion {
     private Node relationFrom;
     private Node relationTo;
 
@@ -11,16 +11,18 @@ public class Suggestion implements Comparable {
         return relationFrom;
     }
 
-    public void setRelationFrom(Node relationFrom) {
+    public Suggestion setRelationFrom(Node relationFrom) {
         this.relationFrom = relationFrom;
+        return this;
     }
 
     public Node getRelationTo() {
         return relationTo;
     }
 
-    public void setRelationTo(Node relationTo) {
+    public Suggestion setRelationTo(Node relationTo) {
         this.relationTo = relationTo;
+        return this;
     }
 
     @Override
@@ -32,7 +34,6 @@ public class Suggestion implements Comparable {
 
         if (!relationFrom.equals(that.relationFrom) && !relationFrom.equals(that.relationTo)) return false;
         return (relationTo.equals(that.relationTo) || relationTo.equals(that.relationFrom));
-
     }
 
     @Override
@@ -42,15 +43,11 @@ public class Suggestion implements Comparable {
         return result;
     }
 
-    public int compareTo(Object o) {
-        Suggestion that = (Suggestion) o;
-        if(this.equals(that)) {
-            return 0;
-        }
-        if (hashCode() < that.hashCode()) {
-            return 1;
-        } else {
-            return -1;
-        }
+    @Override
+    public String toString() {
+        return "Suggestion{" +
+                "relationFrom=" + relationFrom +
+                ", relationTo=" + relationTo +
+                '}';
     }
 }

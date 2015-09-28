@@ -14,24 +14,27 @@ public class Node {
         return fullPath;
     }
 
-    public void setFullPath(String fullPath) {
+    public Node setFullPath(String fullPath) {
         this.fullPath = fullPath;
+        return this;
     }
 
     public String getColumnName() {
         return columnName;
     }
 
-    public void setColumnName(String columnName) {
+    public Node setColumnName(String columnName) {
         this.columnName = columnName;
+        return this;
     }
 
     public boolean isIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(boolean identifier) {
+    public Node setIdentifier(boolean identifier) {
         this.identifier = identifier;
+        return this;
     }
 
     @Override
@@ -51,5 +54,14 @@ public class Node {
         int result = fullPath.hashCode();
         result = 31 * result + columnName.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "fullPath='" + fullPath + '\'' +
+                ", columnName='" + columnName + '\'' +
+                ", identifier=" + identifier +
+                '}';
     }
 }

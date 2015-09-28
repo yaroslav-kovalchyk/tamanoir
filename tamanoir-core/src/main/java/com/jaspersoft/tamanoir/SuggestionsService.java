@@ -11,10 +11,10 @@ import com.jaspersoft.tamanoir.dto.Suggestion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Created by serhii.blazhyievskyi on 9/22/2015.
@@ -33,7 +33,7 @@ public class SuggestionsService {
                 }
             }
         }
-        Set<Suggestion> result = new TreeSet<Suggestion>();
+        Set<Suggestion> result = new HashSet<Suggestion>();
         if(metadata != null) {
             Map<String, List<Node>> allColumns = new HashMap<String, List<Node>>();
             fillColumnsMap((ResourceGroupElement) metadata, allColumns);
