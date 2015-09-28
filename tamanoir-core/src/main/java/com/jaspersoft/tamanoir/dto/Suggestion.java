@@ -7,6 +7,15 @@ public class Suggestion {
     private Node relationFrom;
     private Node relationTo;
 
+    public Suggestion() {
+        
+    }
+
+    public Suggestion(Suggestion suggestion) {
+        this.relationFrom = suggestion.getRelationFrom();
+        this.relationTo = suggestion.getRelationTo();
+    }
+
     public Node getRelationFrom() {
         return relationFrom;
     }

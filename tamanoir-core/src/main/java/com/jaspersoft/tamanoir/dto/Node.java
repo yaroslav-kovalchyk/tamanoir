@@ -10,6 +10,16 @@ public class Node {
     private String columnName;
     private boolean identifier = false;
 
+    public Node() {
+
+    }
+
+    public Node(Node node) {
+        this.fullPath = node.getFullPath();
+        this.columnName = node.getColumnName();
+        this.identifier = node.isIdentifier();
+    }
+
     public String getFullPath() {
         return fullPath;
     }
