@@ -20,12 +20,16 @@
 */
 package com.jaspersoft.tamanoir.web.rest;
 
+import com.jaspersoft.datadiscovery.dto.SchemaElement;
 import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.ConnectionsService;
+import com.jaspersoft.tamanoir.connection.DataSet;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
 import com.jaspersoft.tamanoir.dto.QueryConnectionDescriptor;
 import com.jaspersoft.tamanoir.dto.query.UnifiedTableQuery;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +44,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.ResultSet;
 import java.util.UUID;
 
 /**
@@ -47,6 +52,7 @@ import java.util.UUID;
  *
  * @author Yaroslav.Kovalchyk
  */
+@Api(value = "connections")
 @Path("/connections")
 public class ConnectionsRestService {
     @Context
@@ -71,11 +77,17 @@ public class ConnectionsRestService {
     }
 
     @POST
+    @ApiOperation(value = "Execute query from Descriptor",
+            response = ResultSet.class)
     @Consumes("application/queryconnection+json")
     public Response executeQuery(QueryConnectionDescriptor queryConnectionDescriptor){
         return Response.ok(new ConnectionsManager().executeQuery(queryConnectionDescriptor)).build();
     }
+
     @GET
+    @ApiOperation(value = "Return dataset metadata by UUID",
+            response = SchemaElement.class,
+            responseContainer = "List")
     @Path("/{uuid}/metadata")
     @Produces("application/json")
     public Response getDataSetMetadata(@PathParam("uuid")UUID uuid){
@@ -83,6 +95,9 @@ public class ConnectionsRestService {
     }
 
     @GET
+    @ApiOperation(value = "Return connection descriptor by UUID",
+            response = QueryConnectionDescriptor.class,
+            responseContainer = "List")
     @Path("/{uuid}")
     @Produces("application/json")
     public Response getConnectionDescription(@PathParam("uuid")UUID uuid){
@@ -90,6 +105,8 @@ public class ConnectionsRestService {
     }
 
     @POST
+    @ApiOperation(value = "Execute unified query",
+            response = DataSet.class)
     @Path("/{uuid}")
     @Produces("application/json")
     @Consumes("application/json")
