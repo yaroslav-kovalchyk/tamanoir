@@ -8,12 +8,12 @@ public class Suggestion {
     private Node relationTo;
 
     public Suggestion() {
-        
+
     }
 
     public Suggestion(Suggestion suggestion) {
-        this.relationFrom = suggestion.getRelationFrom();
-        this.relationTo = suggestion.getRelationTo();
+        this.relationFrom = new Node(suggestion.getRelationFrom());
+        this.relationTo = new Node(suggestion.getRelationTo());
     }
 
     public Node getRelationFrom() {
