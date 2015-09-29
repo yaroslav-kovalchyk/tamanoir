@@ -22,6 +22,8 @@ package com.jaspersoft.tamanoir.web.rest;
 
 import com.jaspersoft.tamanoir.ConnectionException;
 import com.jaspersoft.tamanoir.dto.ErrorDescriptor;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.jaspersoft.tamanoir.domain.Domain;
 import org.jaspersoft.tamanoir.domain.DomainsService;
 
@@ -46,6 +48,7 @@ import java.util.Set;
  *
  * @author Yaroslav.Kovalchyk
  */
+@Api(value = "domains")
 @Path("/domains")
 public class DomainsRestService {
     @Context
@@ -54,12 +57,16 @@ public class DomainsRestService {
     private HttpServletRequest request;
 
     @POST
+    @ApiOperation(value = "Return new domain name",
+            response = String.class)
     @Consumes("application/json")
     public Response createDomain(Domain domain) throws URISyntaxException {
         return Response.created(new URI(request.getRequestURL().append("/").append(getDomainsService().saveDomain(domain)).toString())).build();
     }
 
     @GET
+    @ApiOperation(value = "Return domain by ID",
+            response = Domain.class)
     @Path("/{id}")
     @Produces("application/json")
     public Domain readDomain(@PathParam("id")Long id){
@@ -67,6 +74,9 @@ public class DomainsRestService {
     }
 
     @GET
+    @ApiOperation(value = "Return all domains",
+            response = Domain.class,
+            responseContainer = "Set")
     @Produces("application/json")
     public Set<Domain> readAllDomains(){
         return getDomainsService().readAllDomains();
@@ -74,6 +84,8 @@ public class DomainsRestService {
 
 
     @PUT
+    @ApiOperation(value = "Update domain by ID",
+            response = Domain.class)
     @Path("/{id}")
     @Consumes("application/json")
     @Produces("application/json")
@@ -82,6 +94,8 @@ public class DomainsRestService {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete domain by ID",
+            response = Domain.class)
     @Path("/{id}")
     @Produces("application/json")
     public Domain deleteDomain(@PathParam("id")Long id){

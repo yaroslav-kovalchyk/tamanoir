@@ -22,6 +22,7 @@ package com.jaspersoft.tamanoir.web;
 
 import com.jaspersoft.tamanoir.ConnectionsManager;
 import com.jaspersoft.tamanoir.ConnectionsService;
+import com.jaspersoft.tamanoir.SuggestionsService;
 import com.jaspersoft.tamanoir.csv.CsvConnectionProcessorFactory;
 import com.jaspersoft.tamanoir.jdbc.JdbcConnectionProcessorFactory;
 import org.apache.commons.logging.Log;
@@ -55,6 +56,7 @@ public class ConnectionsRegistrar implements ServletContextListener {
         }
         sce.getServletContext().setAttribute(ConnectionsService.class.getName(), new ConnectionsService(storage));
         sce.getServletContext().setAttribute(DomainsService.class.getName(), new DomainsService(sessionFactory));
+        sce.getServletContext().setAttribute(SuggestionsService.class.getName(), new SuggestionsService());
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
